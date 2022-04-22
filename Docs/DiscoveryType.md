@@ -1,0 +1,27 @@
+# Discovery payload types
+
+- `0x01`: Hardware address
+- `0x02`: MAC and IP Info
+- `0x03`: Firmware version
+- `0x06`: Username
+- `0x07`: Salt
+- `0x08`: Random Challenge
+- `0x09`: Challenge
+- `0x0A`: Uptime
+- `0x0B`: Hostname
+- `0x0C`: Platform (short model name)
+- `0x0D`: ESSID
+- `0x0E`: WMode
+- `0x0F`: Webui
+- `0x12`: Sequence
+- `0x13`: Serial
+- `0x14`: Model
+- `0x15`: Model
+- `0x16`: Version
+- `0x17`: Default config
+- `0x18`: Locating
+- `0x19`: DHCP client
+- `0x1A`: DHCP active
+- `0x1B`: Factory version
+- `0x1C`: SSH port
+- `0x1D`: Platform version

@@ -13,6 +13,7 @@ public class DiscoveryPacket {
 	public const byte PAYLOAD_MACIP = 0x02;
 	public const byte PAYLOAD_MODEL = 0x0b;
 	public const byte PAYLOAD_SERIAL = 0x13;
+	public const byte PAYLOAD_SSHPORT = 0x1c;
 
 	public byte Version { get; set; }
 	public byte DiscoveryType { get; set; }
@@ -100,5 +101,13 @@ public class DiscoveryPacket {
 
 	public void SetPayloadAsMacIp(byte key, PhysicalAddress mac, IPAddress ip) {
 		Payloads[key] = mac.GetAddressBytes().Concat(ip.GetAddressBytes()).ToArray();
+	}
+
+	public ushort GetPayloadAsUShort(byte key) {
+		return BinaryPrimitives.ReadUInt16BigEndian(Payloads[key]);
+	}
+
+	public void SetPayloadAsUShort(byte key, ushort data) {
+		Payloads[key] = BigEndianReader.GetUShortBytes(data);
 	}
 }

@@ -1,8 +1,6 @@
 using FxSsh;
 using FxSsh.Services;
-using System.Security.Cryptography;
 using System.Text;
-using TNBU.Core.Utils;
 using TNBU.MitM.Models;
 
 namespace TNBU.MitM.Services;
@@ -16,15 +14,11 @@ public class DeviceSSHService : IDisposable {
 	private readonly ILogger logger;
 	private readonly SshServer server;
 
-	public DeviceSSHService(ILogger _logger, ushort _port) {
+	public DeviceSSHService(ILogger _logger, ushort _port, string _key, string _hash) {
 		logger = _logger;
 		Port = _port;
-
-		using var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
-		Key = keygen.ToB64Blob(true);
-		using var sha = SHA1.Create();
-		var b64key = keygen.ToRfcPublicKey().Split(' ')[1];
-		Hash = HexConversions.BytesToColon(sha.ComputeHash(Convert.FromBase64String(b64key)));
+		Key = _key;
+		Hash = _hash;
 
 		server = new SshServer(new StartingInfo(System.Net.IPAddress.IPv6Any, Port, "SSH-2.0-TNBU"));
 		server.AddHostKey("ssh-rsa", Key);

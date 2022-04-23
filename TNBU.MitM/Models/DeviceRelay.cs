@@ -28,6 +28,7 @@ public class DeviceRelay {
 	private readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 	private readonly DeviceSSHService sshService;
 	private readonly ILogger logger;
+	private readonly string cfgPath;
 
 	private static readonly HttpClient client = new(new SocketsHttpHandler {
 		ActivityHeadersPropagator = null
@@ -37,16 +38,22 @@ public class DeviceRelay {
 		client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
 	}
 
-	public DeviceRelay(DiscoveryPacket dp, DeviceSSHService _sshService, ILogger _logger) {
-		Mac = dp.Mac;
+	public DeviceRelay(PhysicalAddress _mac, IPAddress _ip, DeviceSSHService _sshService, ILogger _logger, string _cfgPath) {
+		Mac = _mac;
 		FakeMac = NetworkUtils.GetFakeMacAddress(Mac);
-		IP = dp.IP;
+		IP = _ip;
 		(FakeIP, Netmask) = NetworkUtils.GetMyIPOnThisSubnet(IP);
 		BroadcastIP = FakeIP.GetBroadcastAddress(Netmask);
 		BroadcastEP = new(BroadcastIP, 10001);
 		sshService = _sshService;
 		sshService.Owner = this;
 		logger = _logger;
+		cfgPath = _cfgPath;
+		if(File.Exists(_cfgPath)) {
+			var cfg = JsonConvert.DeserializeObject<DeviceCFG>(File.ReadAllText(cfgPath))!;
+			AuthKey = cfg.AuthKey;
+			InformURL = cfg.InformURL;
+		}
 	}
 
 	public async Task<byte[]> HandleInform(InformPacket req) {
@@ -92,8 +99,17 @@ public class DeviceRelay {
 	public (string response, int exitCode) HandleSSHExec(string cmd, string user, string password) {
 		if(cmd.StartsWith("/usr/bin/syswrapper.sh set-adopt")) {
 			var args = cmd.Split(' ');
-			InformURL = args[2];
-			AuthKey = args[3];
+			var newInformUrl = args[2];
+			var newAuthKey = args[3];
+			if(AuthKey != newAuthKey || InformURL != newInformUrl) {
+				AuthKey = newAuthKey;
+				InformURL = newInformUrl;
+				var cfg = new DeviceCFG {
+					AuthKey = newAuthKey,
+					InformURL = newInformUrl
+				};
+				File.WriteAllText(cfgPath, JsonConvert.SerializeObject(cfg));
+			}
 			var newcmd = $"/usr/bin/syswrapper.sh set-adopt {FakeInformUrl} {AuthKey}";
 			using var client = new Renci.SshNet.SshClient(IP.ToString(), user, password);
 			client.Connect();
@@ -103,5 +119,10 @@ public class DeviceRelay {
 			return (result, ret.ExitStatus);
 		}
 		throw new NotImplementedException(cmd);
+	}
+
+	class DeviceCFG {
+		public string AuthKey { get; set; } = null!;
+		public string InformURL { get; set; } = null!;
 	}
 }

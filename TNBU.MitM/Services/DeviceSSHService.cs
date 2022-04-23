@@ -1,0 +1,78 @@
+using FxSsh;
+using FxSsh.Services;
+using System.Security.Cryptography;
+using System.Text;
+using TNBU.Core.Utils;
+using TNBU.MitM.Models;
+
+namespace TNBU.MitM.Services;
+
+public class DeviceSSHService : IDisposable {
+	public string Key { get; }
+	public string Hash { get; }
+	public ushort Port { get; }
+	public DeviceRelay? Owner { get; set; }
+
+	private readonly ILogger logger;
+	private readonly SshServer server;
+
+	public DeviceSSHService(ILogger _logger, ushort _port) {
+		logger = _logger;
+		Port = _port;
+
+		using var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
+		Key = keygen.ToB64Blob(true);
+		using var sha = SHA1.Create();
+		var b64key = keygen.ToRfcPublicKey().Split(' ')[1];
+		Hash = HexConversions.BytesToColon(sha.ComputeHash(Convert.FromBase64String(b64key)));
+
+		server = new SshServer(new StartingInfo(System.Net.IPAddress.IPv6Any, Port, "SSH-2.0-TNBU"));
+		server.AddHostKey("ssh-rsa", Key);
+		server.ConnectionAccepted += ConnectionAccepted;
+		server.Start();
+	}
+
+	private void ConnectionAccepted(object? sender, Session e) {
+		logger.LogInformation("Connection accepted");
+		e.ServiceRegistered += ServiceRegistered;
+	}
+
+	private void ServiceRegistered(object? sender, SshService e) {
+		var session = (Session)sender!;
+		logger.LogInformation("Session {session} requesting {type}", Convert.ToHexString(session.SessionId), e.GetType().Name);
+		if(e is UserauthService userauthService) {
+			userauthService.Userauth += UserAuth;
+		} else if(e is ConnectionService connectionService) {
+			connectionService.CommandOpened += CommandOpened;
+		}
+	}
+
+	private void UserAuth(object? sender, UserauthArgs e) {
+		var session = e.Session;
+		logger.LogInformation("Session {session} authenticated as {user}:{pw}", Convert.ToHexString(session.SessionId), e.Username, e.Password);
+		e.Result = true;
+	}
+
+	private void CommandOpened(object? sender, CommandRequestedArgs e) {
+		var session = e.AttachedUserauthArgs.Session;
+		logger.LogInformation("Channel {channel} in session {session} runs {st}: \"{ct}\".", e.Channel.ServerChannelId, Convert.ToHexString(session.SessionId).ToLowerInvariant(), e.ShellType, e.CommandText);
+		if(e.ShellType == "shell") {
+			throw new NotImplementedException("Shell");
+		} else if(e.ShellType == "exec") {
+			if(Owner == null) {
+				throw new NullReferenceException(nameof(Owner));
+			}
+			var (response, exitcode) = Owner.HandleSSHExec(e.CommandText, e.AttachedUserauthArgs.Username, e.AttachedUserauthArgs.Password);
+			e.Channel.SendData(Encoding.ASCII.GetBytes(response));
+			e.Channel.SendClose((uint)exitcode);
+		} else if(e.ShellType == "subsystem") {
+			throw new NotImplementedException("Subsystem");
+		}
+	}
+
+	public void Dispose() {
+		GC.SuppressFinalize(this);
+		server.Stop();
+		server.Dispose();
+	}
+}

@@ -39,6 +39,8 @@ public class DeviceManagerService {
 		Directory.CreateDirectory(deviceCfgPath);
 		var sshcfg = Path.Combine(deviceCfgPath, "ssh.json");
 		var cfgpath = Path.Combine(deviceCfgPath, "device.json");
-		Devices.Add(mac, new DeviceRelay(mac, ip, sshFactory.CreateSSHServer(sshcfg), logger, cfgpath));
+		var logpath = Path.Combine(deviceCfgPath, "logs");
+		Directory.CreateDirectory(logpath);
+		Devices.Add(mac, new DeviceRelay(mac, ip, sshFactory.CreateSSHServer(sshcfg), logger, cfgpath, logpath));
 	}
 }

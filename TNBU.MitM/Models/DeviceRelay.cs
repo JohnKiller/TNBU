@@ -29,6 +29,7 @@ public class DeviceRelay {
 	private readonly DeviceSSHService sshService;
 	private readonly ILogger logger;
 	private readonly string cfgPath;
+	private readonly string logPath;
 
 	private static readonly HttpClient client = new(new SocketsHttpHandler {
 		ActivityHeadersPropagator = null
@@ -38,7 +39,7 @@ public class DeviceRelay {
 		client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
 	}
 
-	public DeviceRelay(PhysicalAddress _mac, IPAddress _ip, DeviceSSHService _sshService, ILogger _logger, string _cfgPath) {
+	public DeviceRelay(PhysicalAddress _mac, IPAddress _ip, DeviceSSHService _sshService, ILogger _logger, string _cfgPath, string _logPath) {
 		Mac = _mac;
 		FakeMac = NetworkUtils.GetFakeMacAddress(Mac);
 		IP = _ip;
@@ -49,6 +50,7 @@ public class DeviceRelay {
 		sshService.Owner = this;
 		logger = _logger;
 		cfgPath = _cfgPath;
+		logPath = _logPath;
 		if(File.Exists(_cfgPath)) {
 			var cfg = JsonConvert.DeserializeObject<DeviceCFG>(File.ReadAllText(cfgPath))!;
 			AuthKey = cfg.AuthKey;
@@ -57,7 +59,15 @@ public class DeviceRelay {
 	}
 
 	public async Task<byte[]> HandleInform(InformPacket req) {
+		string logfile;
+		var counter = 0;
+		do {
+			logfile = Path.Combine(logPath, DateTime.Now.ToString("yyyyMMdd-HHmmss-") + ++counter + ".txt");
+		} while(File.Exists(logfile));
+
 		req.Decrypt(AuthKey);
+
+		var logdata = $"---- REQUEST ----\n{req.Body}\n\n";
 
 		req.MACAddress = FakeMac;
 
@@ -84,6 +94,10 @@ public class DeviceRelay {
 
 		var inform_resp = InformPacket.Decode(rawstream);
 		inform_resp.Decrypt(AuthKey);
+
+		logdata += $"---- RESPONSE ----\n{inform_resp.Body}\n\n";
+		File.WriteAllText(logfile, logdata);
+
 		inform_resp.MACAddress = Mac;
 		return inform_resp.Encode(AuthKey);
 	}

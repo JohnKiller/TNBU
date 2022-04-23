@@ -20,7 +20,7 @@ public class InformPacket {
 	const ushort FLAG_COMP_ZLIB = 2;
 	const ushort FLAG_COMP_SNAPPY = 4;
 	const ushort FLAG_ENC_GCM = 8;
-	
+
 	public uint Version { get; set; }
 	public uint PayloadVersion { get; set; }
 	public PhysicalAddress MACAddress { get; set; } = null!;
@@ -30,7 +30,7 @@ public class InformPacket {
 	public bool IsGCM { get; set; }
 	public byte[] IV { get; set; } = null!;
 	public string Body { get; set; } = null!;
-	
+
 	private byte[] aad = null!;
 	private byte[] payload = null!;
 

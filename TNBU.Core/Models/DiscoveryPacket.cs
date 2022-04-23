@@ -9,12 +9,18 @@ namespace TNBU.Core.Models;
 public class DiscoveryPacket {
 	//TODO: convert to enum
 	public const byte DISCOVERYTYPE_DISCOVERY = 0x06;
-	public const byte PAYLOAD_MODEL = 0x0b;
+	public const byte PAYLOAD_MAC = 0x01;
 	public const byte PAYLOAD_MACIP = 0x02;
+	public const byte PAYLOAD_MODEL = 0x0b;
+	public const byte PAYLOAD_SERIAL = 0x13;
 
 	public byte Version { get; set; }
 	public byte DiscoveryType { get; set; }
 	public Dictionary<byte, byte[]> Payloads { get; } = new();
+
+	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
+	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
+	public string Model => GetPayloadAsString(PAYLOAD_MODEL);
 
 	public static DiscoveryPacket Decode(byte[] data) {
 		var ret = new DiscoveryPacket {
@@ -62,12 +68,11 @@ public class DiscoveryPacket {
 			DISCOVERYTYPE_DISCOVERY => "Discovery",
 			_ => $"Unknown ({DiscoveryType})"
 		};
-		var (mac, ip) = GetPayloadAsMacIp(PAYLOAD_MACIP);
 		return
 			$"Type: {type}\n" +
-			$"Model: {GetPayloadAsString(PAYLOAD_MODEL)}\n" +
-			$"IP: {ip}\n" +
-			$"MAC: {mac}";
+			$"Model: {Model}\n" +
+			$"IP: {IP}\n" +
+			$"MAC: {Mac}";
 	}
 
 	public string GetPayloadAsString(byte key) {
@@ -86,7 +91,7 @@ public class DiscoveryPacket {
 		Payloads[key] = mac.GetAddressBytes();
 	}
 
-	public (PhysicalAddress, IPAddress) GetPayloadAsMacIp(byte key) {
+	public (PhysicalAddress Mac, IPAddress IP) GetPayloadAsMacIp(byte key) {
 		var payload = Payloads[key];
 		var mac = new PhysicalAddress(payload[0..6]);
 		var ip = new IPAddress(payload[6..10]);

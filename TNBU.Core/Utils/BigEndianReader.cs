@@ -29,9 +29,15 @@ public class BigEndianReader : BinaryReader {
 		return BinaryPrimitives.ReadUInt64BigEndian(ReadBytes(sizeof(ulong)));
 	}
 
-	public static byte[] GetUShortBytes(ushort len) {
+	public static byte[] GetUShortBytes(ushort data) {
 		var ret = new byte[sizeof(ushort)];
-		BinaryPrimitives.WriteUInt16BigEndian(ret, len);
+		BinaryPrimitives.WriteUInt16BigEndian(ret, data);
+		return ret;
+	}
+
+	public static byte[] GetUIntBytes(uint data) {
+		var ret = new byte[sizeof(uint)];
+		BinaryPrimitives.WriteUInt32BigEndian(ret, data);
 		return ret;
 	}
 }

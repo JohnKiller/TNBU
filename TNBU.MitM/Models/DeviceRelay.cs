@@ -3,11 +3,9 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using TNBU.Core.Models;
 using TNBU.Core.Utils;
 using TNBU.MitM.Services;
-using TNBU.MitM.Utils;
 
 namespace TNBU.MitM.Models;
 
@@ -19,13 +17,10 @@ public class DeviceRelay {
 	public IPAddress IP { get; }
 	public IPAddress FakeIP { get; }
 	public IPAddress Netmask { get; }
-	public IPAddress BroadcastIP { get; }
-	public IPEndPoint BroadcastEP { get; }
 	public string? InformURL { get; set; }
 	public string AuthKey { get; set; } = InformPacket.DEFAULT_KEY;
 	public string FakeInformUrl => $"http://{FakeIP}:8081/inform";
 
-	private readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 	private readonly DeviceSSHService sshService;
 	private readonly ILogger logger;
 	private readonly string cfgPath;
@@ -44,8 +39,6 @@ public class DeviceRelay {
 		FakeMac = NetworkUtils.GetFakeMacAddress(Mac);
 		IP = _ip;
 		(FakeIP, Netmask) = NetworkUtils.GetMyIPOnThisSubnet(IP);
-		BroadcastIP = FakeIP.GetBroadcastAddress(Netmask);
-		BroadcastEP = new(BroadcastIP, 10001);
 		sshService = _sshService;
 		sshService.Owner = this;
 		logger = _logger;
@@ -107,7 +100,7 @@ public class DeviceRelay {
 		dp.SetPayloadAsMacIp(DiscoveryPacket.PAYLOAD_MACIP, FakeMac, FakeIP);
 		dp.SetPayloadAsMac(DiscoveryPacket.PAYLOAD_SERIAL, FakeMac);
 		dp.SetPayloadAsUShort(DiscoveryPacket.PAYLOAD_SSHPORT, sshService.Port);
-		udpClient.SendTo(dp.Encode(), BroadcastEP);
+		dp.Broadcast();
 	}
 
 	public (string response, int exitCode) HandleSSHExec(string cmd, string user, string password) {

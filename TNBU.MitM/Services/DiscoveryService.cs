@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 using TNBU.Core.Models;
-using TNBU.MitM.Utils;
+using TNBU.Core.Utils;
 
 namespace TNBU.MitM.Services;
 

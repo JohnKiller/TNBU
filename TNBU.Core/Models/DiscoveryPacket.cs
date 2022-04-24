@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using TNBU.Core.Utils;
 
@@ -33,6 +34,8 @@ public class DiscoveryPacket {
 	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
 	public string Model => GetPayloadAsString(PAYLOAD_LONGMODEL);
+
+	private static readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 	public static DiscoveryPacket Decode(byte[] data) {
 		var ret = new DiscoveryPacket {
@@ -73,6 +76,13 @@ public class DiscoveryPacket {
 		ret.AddRange(BigEndianReader.GetUShortBytes((ushort)payret.Count));
 		ret.AddRange(payret);
 		return ret.ToArray();
+	}
+
+	public void Broadcast() {
+		var (ip, netmask) = NetworkUtils.GetMyIPOnThisSubnet(IP);
+		var broadcastIP = ip.GetBroadcastAddress(netmask);
+		var broadcastEP = new IPEndPoint(broadcastIP, 10001);
+		udpClient.SendTo(Encode(), broadcastEP);
 	}
 
 	public override string ToString() {

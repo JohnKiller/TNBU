@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace TNBU.MitM.Utils;
+namespace TNBU.Core.Utils;
 public static class NetworkUtils {
 	public static bool IsFakeMac(PhysicalAddress mac) {
 		var b = mac.GetAddressBytes();
@@ -39,7 +39,7 @@ public static class NetworkUtils {
 		var subnetMaskBytes = subnetMask.GetAddressBytes();
 		var broadcastAddress = new byte[ipAdressBytes.Length];
 		for(var i = 0; i < broadcastAddress.Length; i++) {
-			broadcastAddress[i] = (byte)(ipAdressBytes[i] | (subnetMaskBytes[i] ^ 255));
+			broadcastAddress[i] = (byte)(ipAdressBytes[i] | subnetMaskBytes[i] ^ 255);
 		}
 		return new IPAddress(broadcastAddress);
 	}
@@ -49,7 +49,7 @@ public static class NetworkUtils {
 		var subnetMaskBytes = subnetMask.GetAddressBytes();
 		var broadcastAddress = new byte[ipAdressBytes.Length];
 		for(var i = 0; i < broadcastAddress.Length; i++) {
-			broadcastAddress[i] = (byte)(ipAdressBytes[i] & (subnetMaskBytes[i]));
+			broadcastAddress[i] = (byte)(ipAdressBytes[i] & subnetMaskBytes[i]);
 		}
 		return new IPAddress(broadcastAddress);
 	}

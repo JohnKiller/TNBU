@@ -9,10 +9,21 @@ namespace TNBU.Core.Models;
 public class DiscoveryPacket {
 	//TODO: convert to enum
 	public const byte DISCOVERYTYPE_DISCOVERY = 0x06;
+
 	public const byte PAYLOAD_MAC = 0x01;
 	public const byte PAYLOAD_MACIP = 0x02;
-	public const byte PAYLOAD_MODEL = 0x0b;
+	public const byte PAYLOAD_FIRMWARE = 0x03;
+	public const byte PAYLOAD_UPTIME = 0x0a;
+	public const byte PAYLOAD_LONGMODEL = 0x0b;
+	public const byte PAYLOAD_SHORTMODEL2 = 0x0c;
+	public const byte PAYLOAD_SEQUENCE = 0x12;
 	public const byte PAYLOAD_SERIAL = 0x13;
+	public const byte PAYLOAD_SHORTMODEL = 0x15;
+	public const byte PAYLOAD_VERSION = 0x16;
+	public const byte PAYLOAD_IS_DEFAULT = 0x17;
+	public const byte PAYLOAD_IS_LOCATING = 0x18;
+	public const byte PAYLOAD_IS_DHCP = 0x19;
+	public const byte PAYLOAD_IS_DHCP_BOUND = 0x20;
 	public const byte PAYLOAD_SSHPORT = 0x1c;
 
 	public byte Version { get; set; }
@@ -21,7 +32,7 @@ public class DiscoveryPacket {
 
 	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
-	public string Model => GetPayloadAsString(PAYLOAD_MODEL);
+	public string Model => GetPayloadAsString(PAYLOAD_LONGMODEL);
 
 	public static DiscoveryPacket Decode(byte[] data) {
 		var ret = new DiscoveryPacket {
@@ -109,5 +120,21 @@ public class DiscoveryPacket {
 
 	public void SetPayloadAsUShort(byte key, ushort data) {
 		Payloads[key] = BigEndianReader.GetUShortBytes(data);
+	}
+
+	public uint GetPayloadAsUInt(byte key) {
+		return BinaryPrimitives.ReadUInt32BigEndian(Payloads[key]);
+	}
+
+	public void SetPayloadAsUInt(byte key, uint data) {
+		Payloads[key] = BigEndianReader.GetUIntBytes(data);
+	}
+
+	public bool GetPayloadAsBoolean(byte key) {
+		return Payloads[key][0] != 0;
+	}
+
+	public void SetPayloadAsBoolean(byte key, bool data) {
+		Payloads[key] = new byte[] { (byte)(data ? 0x01 : 0x00) };
 	}
 }

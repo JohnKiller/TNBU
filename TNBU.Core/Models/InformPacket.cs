@@ -3,6 +3,7 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
 using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Net.NetworkInformation;
@@ -159,5 +160,10 @@ public class InformPacket {
 		aad.CopyTo(ret, 0);
 		payload.CopyTo(ret, aad.Length);
 		return ret;
+	}
+
+	public static byte[] GenerateIV() {
+		var random = new SecureRandom();
+		return random.GenerateSeed(16);
 	}
 }

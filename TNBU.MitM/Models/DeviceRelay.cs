@@ -60,7 +60,17 @@ public class DeviceRelay {
 
 		req.Decrypt(AuthKey);
 
-		var logdata = $"---- REQUEST ----\n{req.Body}\n\n";
+		var logdata = $"---- REQUEST ----\n";
+		logdata += $"AuthKey {AuthKey}\n";
+		logdata += $"IsAES {(req.IsAES ? "Y" : "N")}\n";
+		logdata += $"IsZLIB {(req.IsZLIB ? "Y" : "N")}\n";
+		logdata += $"IsGCM {(req.IsGCM ? "Y" : "N")}\n";
+		logdata += $"IsSnappy {(req.IsSnappy ? "Y" : "N")}\n";
+		logdata += $"MACAddress {req.MACAddress}\n";
+		logdata += $"Version {req.Version}\n";
+		logdata += $"PayloadVersion {req.PayloadVersion}\n";
+		logdata += $"IV {req.IV.BytesToColon()}\n";
+		logdata += $"\n{req.Body}\n\n";
 
 		req.MACAddress = FakeMac;
 
@@ -88,7 +98,18 @@ public class DeviceRelay {
 		var inform_resp = InformPacket.Decode(rawstream);
 		inform_resp.Decrypt(AuthKey);
 
-		logdata += $"---- RESPONSE ----\n{inform_resp.Body}\n\n";
+		logdata += $"---- RESPONSE ----\n";
+		logdata += $"AuthKey {AuthKey}\n";
+		logdata += $"IsAES {(inform_resp.IsAES ? "Y" : "N")}\n";
+		logdata += $"IsZLIB {(inform_resp.IsZLIB ? "Y" : "N")}\n";
+		logdata += $"IsGCM {(inform_resp.IsGCM ? "Y" : "N")}\n";
+		logdata += $"IsSnappy {(inform_resp.IsSnappy ? "Y" : "N")}\n";
+		logdata += $"MACAddress {inform_resp.MACAddress}\n";
+		logdata += $"Version {inform_resp.Version}\n";
+		logdata += $"PayloadVersion {inform_resp.PayloadVersion}\n";
+		logdata += $"IV {inform_resp.IV.BytesToColon()}\n";
+		logdata += $"\n{inform_resp.Body}\n\n";
+
 		File.WriteAllText(logfile, logdata);
 
 		inform_resp.MACAddress = Mac;

@@ -17,8 +17,7 @@ public class DeviceRelay {
 	public IPAddress IP { get; }
 	public IPAddress FakeIP { get; }
 	public IPAddress Netmask { get; }
-	public string? InformURL { get; set; }
-	public string AuthKey { get; set; } = InformPacket.DEFAULT_KEY;
+	public StoredCFG Config { get; }
 	public string FakeInformUrl => $"http://{FakeIP}:8081/inform";
 
 	private readonly DeviceSSHService sshService;
@@ -45,9 +44,9 @@ public class DeviceRelay {
 		cfgPath = _cfgPath;
 		logPath = _logPath;
 		if(File.Exists(_cfgPath)) {
-			var cfg = JsonConvert.DeserializeObject<DeviceCFG>(File.ReadAllText(cfgPath))!;
-			AuthKey = cfg.AuthKey;
-			InformURL = cfg.InformURL;
+			Config = JsonConvert.DeserializeObject<StoredCFG>(File.ReadAllText(cfgPath))!;
+		} else {
+			Config = new();
 		}
 	}
 
@@ -58,10 +57,10 @@ public class DeviceRelay {
 			logfile = Path.Combine(logPath, DateTime.Now.ToString("yyyyMMdd-HHmmss-") + ++counter + ".txt");
 		} while(File.Exists(logfile));
 
-		req.Decrypt(AuthKey);
+		req.Decrypt(Config.AuthKey);
 
 		var logdata = $"---- REQUEST ----\n";
-		logdata += $"AuthKey {AuthKey}\n";
+		logdata += $"AuthKey {Config.AuthKey}\n";
 		logdata += $"IsAES {(req.IsAES ? "Y" : "N")}\n";
 		logdata += $"IsZLIB {(req.IsZLIB ? "Y" : "N")}\n";
 		logdata += $"IsGCM {(req.IsGCM ? "Y" : "N")}\n";
@@ -75,9 +74,10 @@ public class DeviceRelay {
 		req.MACAddress = FakeMac;
 
 		var decodedBody = JsonConvert.DeserializeObject<JObject>(req.Body)!;
+
 		var fingerprint = decodedBody["fingerprint"];
 
-		req.Body = req.Body.Replace(FakeInformUrl, InformURL);
+		req.Body = req.Body.Replace(FakeInformUrl, Config.InformURL);
 		req.Body = req.Body.Replace(IP.ToString(), FakeIP.ToString());
 		req.Body = req.Body.Replace(Serial, FakeSerial);
 		if(fingerprint != null) {
@@ -85,9 +85,9 @@ public class DeviceRelay {
 		}
 		req.Body = req.Body.Replace(HexConversions.BytesToColon(Mac.GetAddressBytes()), HexConversions.BytesToColon(FakeMac.GetAddressBytes()));
 
-		var byteArrayContent = new ByteArrayContent(req.Encode(AuthKey));
+		var byteArrayContent = new ByteArrayContent(req.Encode(Config.AuthKey));
 		byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/x-binary");
-		var response = await client.PostAsync(InformURL, byteArrayContent);
+		var response = await client.PostAsync(Config.InformURL, byteArrayContent);
 		response.EnsureSuccessStatusCode();
 
 		var respdata = response.Content.ReadAsStream();
@@ -96,10 +96,10 @@ public class DeviceRelay {
 		rawstream.Position = 0;
 
 		var inform_resp = InformPacket.Decode(rawstream);
-		inform_resp.Decrypt(AuthKey);
+		inform_resp.Decrypt(Config.AuthKey);
 
 		logdata += $"---- RESPONSE ----\n";
-		logdata += $"AuthKey {AuthKey}\n";
+		logdata += $"AuthKey {Config.AuthKey}\n";
 		logdata += $"IsAES {(inform_resp.IsAES ? "Y" : "N")}\n";
 		logdata += $"IsZLIB {(inform_resp.IsZLIB ? "Y" : "N")}\n";
 		logdata += $"IsGCM {(inform_resp.IsGCM ? "Y" : "N")}\n";
@@ -112,8 +112,27 @@ public class DeviceRelay {
 
 		File.WriteAllText(logfile, logdata);
 
+		var respBody = JsonConvert.DeserializeObject<JObject>(inform_resp.Body)!;
+		var hasChanged = false;
+
+		var system_cfg = respBody["system_cfg"];
+		if(system_cfg != null) {
+			Config.CurrentConfig = system_cfg;
+			hasChanged = true;
+		}
+
+		var mgmt_cfg = respBody["mgmt_cfg"];
+		if(mgmt_cfg != null) {
+			Config.CurrentMgmtConfig = mgmt_cfg;
+			hasChanged = true;
+		}
+
+		if(hasChanged) {
+			SaveConfig();
+		}
+
 		inform_resp.MACAddress = Mac;
-		return inform_resp.Encode(AuthKey);
+		return inform_resp.Encode(Config.AuthKey);
 	}
 
 	public void HandleDiscovery(DiscoveryPacket dp) {
@@ -129,16 +148,12 @@ public class DeviceRelay {
 			var args = cmd.Split(' ');
 			var newInformUrl = args[2];
 			var newAuthKey = args[3];
-			if(AuthKey != newAuthKey || InformURL != newInformUrl) {
-				AuthKey = newAuthKey;
-				InformURL = newInformUrl;
-				var cfg = new DeviceCFG {
-					AuthKey = newAuthKey,
-					InformURL = newInformUrl
-				};
-				File.WriteAllText(cfgPath, JsonConvert.SerializeObject(cfg));
+			if(Config.AuthKey != newAuthKey || Config.InformURL != newInformUrl) {
+				Config.AuthKey = newAuthKey;
+				Config.InformURL = newInformUrl;
+				SaveConfig();
 			}
-			var newcmd = $"/usr/bin/syswrapper.sh set-adopt {FakeInformUrl} {AuthKey}";
+			var newcmd = $"/usr/bin/syswrapper.sh set-adopt {FakeInformUrl} {Config.AuthKey}";
 			using var client = new Renci.SshNet.SshClient(IP.ToString(), user, password);
 			client.Connect();
 			var ret = client.RunCommand(newcmd);
@@ -149,8 +164,14 @@ public class DeviceRelay {
 		throw new NotImplementedException(cmd);
 	}
 
-	class DeviceCFG {
-		public string AuthKey { get; set; } = null!;
-		public string InformURL { get; set; } = null!;
+	private void SaveConfig() {
+		File.WriteAllText(cfgPath, JsonConvert.SerializeObject(Config));
+	}
+
+	public class StoredCFG {
+		public string AuthKey { get; set; } = InformPacket.DEFAULT_KEY;
+		public string? InformURL { get; set; }
+		public object? CurrentConfig { get; set; }
+		public object? CurrentMgmtConfig { get; set; }
 	}
 }

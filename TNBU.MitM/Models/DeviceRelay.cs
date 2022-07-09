@@ -24,6 +24,8 @@ public class DeviceRelay {
 	private readonly ILogger logger;
 	private readonly string cfgPath;
 	private readonly string logPath;
+	private readonly string mgmtPath;
+	private readonly string systemCfgPath;
 
 	private static readonly HttpClient client = new(new SocketsHttpHandler {
 		ActivityHeadersPropagator = null
@@ -33,7 +35,7 @@ public class DeviceRelay {
 		client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
 	}
 
-	public DeviceRelay(PhysicalAddress _mac, IPAddress _ip, DeviceSSHService _sshService, ILogger _logger, string _cfgPath, string _logPath) {
+	public DeviceRelay(PhysicalAddress _mac, IPAddress _ip, DeviceSSHService _sshService, ILogger _logger, string _deviceCfgPath) {
 		Mac = _mac;
 		FakeMac = NetworkUtils.GetFakeMacAddress(Mac);
 		IP = _ip;
@@ -41,9 +43,13 @@ public class DeviceRelay {
 		sshService = _sshService;
 		sshService.Owner = this;
 		logger = _logger;
-		cfgPath = _cfgPath;
-		logPath = _logPath;
-		if(File.Exists(_cfgPath)) {
+
+		cfgPath = Path.Combine(_deviceCfgPath, "device.json");
+		logPath = Path.Combine(_deviceCfgPath, "logs");
+		mgmtPath = Path.Combine(_deviceCfgPath, "mgmt.ini");
+		systemCfgPath = Path.Combine(_deviceCfgPath, "system.ini");
+		Directory.CreateDirectory(logPath);
+		if(File.Exists(cfgPath)) {
 			Config = JsonConvert.DeserializeObject<StoredCFG>(File.ReadAllText(cfgPath))!;
 		} else {
 			Config = new();
@@ -117,13 +123,13 @@ public class DeviceRelay {
 
 		var system_cfg = respBody["system_cfg"];
 		if(system_cfg != null) {
-			Config.CurrentConfig = system_cfg;
+			Config.CurrentConfig = (string?)system_cfg;
 			hasChanged = true;
 		}
 
 		var mgmt_cfg = respBody["mgmt_cfg"];
 		if(mgmt_cfg != null) {
-			Config.CurrentMgmtConfig = mgmt_cfg;
+			Config.CurrentMgmtConfig = (string?)mgmt_cfg;
 			hasChanged = true;
 		}
 
@@ -166,12 +172,22 @@ public class DeviceRelay {
 
 	private void SaveConfig() {
 		File.WriteAllText(cfgPath, JsonConvert.SerializeObject(Config));
+		if(Config.CurrentMgmtConfig != null) {
+			WriteIni(Config.CurrentMgmtConfig, mgmtPath);
+		}
+		if(Config.CurrentConfig != null) {
+			WriteIni(Config.CurrentConfig, systemCfgPath);
+		}
+	}
+
+	private static void WriteIni(string data, string path) {
+		File.WriteAllLines(path, data.Split('\n').OrderBy(x => x));
 	}
 
 	public class StoredCFG {
 		public string AuthKey { get; set; } = InformPacket.DEFAULT_KEY;
 		public string? InformURL { get; set; }
-		public object? CurrentConfig { get; set; }
-		public object? CurrentMgmtConfig { get; set; }
+		public string? CurrentConfig { get; set; }
+		public string? CurrentMgmtConfig { get; set; }
 	}
 }

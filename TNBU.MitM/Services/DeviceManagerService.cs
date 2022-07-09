@@ -36,11 +36,8 @@ public class DeviceManagerService {
 	private void LoadDevice(PhysicalAddress mac, IPAddress ip) {
 		logger.LogInformation("New device detected: {ip} {mac}", ip, mac);
 		var deviceCfgPath = Path.Combine(DEVICES_PATH, mac.ToString());
-		Directory.CreateDirectory(deviceCfgPath);
 		var sshcfg = Path.Combine(deviceCfgPath, "ssh.json");
-		var cfgpath = Path.Combine(deviceCfgPath, "device.json");
-		var logpath = Path.Combine(deviceCfgPath, "logs");
-		Directory.CreateDirectory(logpath);
-		Devices.Add(mac, new DeviceRelay(mac, ip, sshFactory.CreateSSHServer(sshcfg), logger, cfgpath, logpath));
+		Directory.CreateDirectory(deviceCfgPath);
+		Devices.Add(mac, new DeviceRelay(mac, ip, sshFactory.CreateSSHServer(sshcfg), logger, deviceCfgPath));
 	}
 }

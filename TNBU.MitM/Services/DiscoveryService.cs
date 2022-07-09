@@ -26,6 +26,10 @@ public class DiscoveryService : IHostedService {
 		while(!cancellationToken.IsCancellationRequested) {
 			try {
 				var pkt = await client.ReceiveAsync(cancellationToken);
+				if(pkt.Buffer.Length < 5) {
+					logger.LogInformation("Got probe packet from {ip}", pkt.RemoteEndPoint);
+					continue;
+				}
 				var decoded = DiscoveryPacket.Decode(pkt.Buffer);
 				if(NetworkUtils.IsFakeMac(decoded.Mac)) {
 					continue;

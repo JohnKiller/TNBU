@@ -70,9 +70,9 @@ public class DiscoveryPacket {
 		}
 		var ret = new List<byte>
 		{
-				Version,
-				DiscoveryType
-			};
+			Version,
+			DiscoveryType
+		};
 		ret.AddRange(BigEndianReader.GetUShortBytes((ushort)payret.Count));
 		ret.AddRange(payret);
 		return ret.ToArray();

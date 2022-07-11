@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgBridge {
-		public List<CfgBridgeEntry> Entries { get; } = new() { new CfgBridgeEntry() };
+		public List<CfgBridgeEntry> Entries { get; } = new();
 		public override string ToString() {
 			return $@"
 bridge.status=enabled

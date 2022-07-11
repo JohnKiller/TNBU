@@ -4,16 +4,18 @@ namespace TNBU.Core.Models {
 		public bool LedEnabled { get; set; } = true;
 
 		public override string ToString() {
+			/*
+				mgmt_url=
+				stun_url=
+			*/
 			return $@"
 capability=notif,notif-assoc-stat
 cfgversion={CfgVersion}
 led_enabled={(LedEnabled ? "true" : "false")}
-mgmt_url=
 report_crash=true
 selfrun_guest_mode=pass
-stun_url=
 use_aes_gcm=true
-";
+".Replace(Environment.NewLine, "\n");
 		}
 	}
 }

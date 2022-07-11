@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgAaa {
-		public List<CfgAaaEntry> Entries { get; } = new() { new CfgAaaEntry() };
+		public List<CfgAaaEntry> Entries { get; } = new();
 		public override string ToString() {
 			return $@"
 aaa.status=enabled

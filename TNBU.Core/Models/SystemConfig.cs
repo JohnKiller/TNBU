@@ -90,7 +90,7 @@ namespace TNBU.Core.Models {
 {Switch}
 # DPI Fingerprint
 # misc
-";
+".Replace(Environment.NewLine, "\n");
 		}
 	}
 }

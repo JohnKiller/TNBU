@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgNetconf {
-		public List<CfgNetconfEntry> Entries { get; } = new() { new CfgNetconfEntry() };
+		public List<CfgNetconfEntry> Entries { get; } = new();
 		public override string ToString() {
 			return $@"
 netconf.status=enabled

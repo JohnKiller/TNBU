@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgRadio {
-		public List<CfgRadioEntry> Entries { get; } = new() { new CfgRadioEntry() };
+		public List<CfgRadioEntry> Entries { get; } = new();
 		public override string ToString() {
 			return $@"
 radio.countrycode=380

@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgWireless {
-		public List<CfgWirelessEntry> Entries { get; } = new() { new CfgWirelessEntry() };
+		public List<CfgWirelessEntry> Entries { get; } = new();
 		public override string ToString() {
 			return $@"
 wireless.status=enabled

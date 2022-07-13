@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using TNBU.GUI.EF;
@@ -18,6 +19,10 @@ namespace TNBU.GUI.Pages.Configuration.WiFi {
 
 		void OnRowClick(TableRowClickEventArgs<WiFiNetwork> e) {
 			NavigationManager.NavigateTo("/configuration/wifi/edit/" + e.Item.ID);
+		}
+
+		void OnNewClick(MouseEventArgs e) {
+			NavigationManager.NavigateTo("/configuration/wifi/new");
 		}
 	}
 }

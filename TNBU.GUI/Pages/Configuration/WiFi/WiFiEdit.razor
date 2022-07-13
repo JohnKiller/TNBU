@@ -1,0 +1,12 @@
+@page "/configuration/wifi/new"
+@page "/configuration/wifi/edit/{id:long}"
+
+<MudContainer Class="mt-8">
+    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">
+        Delete
+    </MudButton>
+    <MudForm>
+        <MudTextField T="string" Label="SSID" Required="true" RequiredError="User name is required!" />
+        <MudTextField T="string" Label="Password" Required="true" RequiredError="User name is required!" />
+    </MudForm>
+</MudContainer>

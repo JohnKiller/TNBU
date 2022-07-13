@@ -1,16 +1,19 @@
 @page "/configuration/wifi"
 
-<MudContainer>
+<MudContainer Class="mt-8">
+    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@OnNewClick">New</MudButton>
+</MudContainer>
+<MudContainer Class="mt-8">
     @if (dbContext != null)
     {
-        <MudTable Items="@dbContext.WiFiNetworks" Hover="true" OnRowClick="(x) => OnRowClick(x)">
+        <MudTable T="EF.Models.WiFiNetwork" Items="@dbContext.WiFiNetworks" Hover="true" OnRowClick="@OnRowClick">
             <HeaderContent>
-                <MudTh>Nr</MudTh>
+                <MudTh>ID</MudTh>
                 <MudTh>SSID</MudTh>
                 <MudTh>Password</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Nr">@context.ID</MudTd>
+                <MudTd DataLabel="ID">@context.ID</MudTd>
                 <MudTd DataLabel="SSID">@context.SSID</MudTd>
                 <MudTd DataLabel="Password">@context.Password</MudTd>
             </RowTemplate>

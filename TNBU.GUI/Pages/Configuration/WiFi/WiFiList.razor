@@ -1,0 +1,19 @@
+@page "/configuration/wifi"
+
+<MudContainer>
+    @if (dbContext != null)
+    {
+        <MudTable Items="@dbContext.WiFiNetworks" Hover="true" OnRowClick="(x) => OnRowClick(x)">
+            <HeaderContent>
+                <MudTh>Nr</MudTh>
+                <MudTh>SSID</MudTh>
+                <MudTh>Password</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.ID</MudTd>
+                <MudTd DataLabel="SSID">@context.SSID</MudTd>
+                <MudTd DataLabel="Password">@context.Password</MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+</MudContainer>

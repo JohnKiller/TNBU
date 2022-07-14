@@ -2,11 +2,17 @@
 @page "/configuration/wifi/edit/{id:long}"
 
 <MudContainer Class="mt-8">
-    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error">
-        Delete
-    </MudButton>
     <MudForm>
-        <MudTextField T="string" Label="SSID" Required="true" RequiredError="User name is required!" />
-        <MudTextField T="string" Label="Password" Required="true" RequiredError="User name is required!" />
+        <MudTextField @bind-Value="row.SSID" Label="SSID" Required="true" />
+        <MudTextField @bind-Value="row.Password" Label="Password" Required="true" />
     </MudForm>
+    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@OnSave">
+        Save
+    </MudButton>
+    @if (ID != 0)
+    {
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@OnDelete">
+            Delete
+        </MudButton>
+    }
 </MudContainer>

@@ -6,7 +6,7 @@ using TNBU.GUI.EF;
 using TNBU.GUI.EF.Models;
 
 namespace TNBU.GUI.Pages.Configuration.WiFi {
-	public partial class WiFiList {
+	public partial class WiFiList :IDisposable{
 		[Inject] public IDbContextFactory<DB> DBS { get; set; } = null!;
 		[Inject] public NavigationManager NavigationManager { get; set; } = null!;
 
@@ -23,6 +23,13 @@ namespace TNBU.GUI.Pages.Configuration.WiFi {
 
 		void OnNewClick(MouseEventArgs e) {
 			NavigationManager.NavigateTo("/configuration/wifi/new");
+		}
+
+		public void Dispose() {
+			GC.SuppressFinalize(this);
+			if(dbContext != null) {
+				dbContext.Dispose();
+			}
 		}
 	}
 }

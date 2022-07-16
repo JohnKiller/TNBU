@@ -2,17 +2,21 @@
 @page "/configuration/wifi/edit/{id:long}"
 
 <MudContainer Class="mt-8">
-    <MudForm>
-        <MudTextField @bind-Value="row.SSID" Label="SSID" Required="true" />
-        <MudTextField @bind-Value="row.Password" Label="Password" Required="true" />
-    </MudForm>
-    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@OnSave">
-        Save
-    </MudButton>
-    @if (ID != 0)
-    {
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@OnDelete">
-            Delete
-        </MudButton>
-    }
+    <MudPaper Class="pa-4">
+        <MudForm @bind-IsValid="@IsFormValid" ValidationDelay="0">
+            <MudTextField @bind-Value="row.SSID" Label="SSID" Required="true" />
+            <MudTextField @bind-Value="row.Password" Label="Password" Required="true" />
+            <MudStack Row="true" Class="mt-8">
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@OnSave" Disabled="!IsFormValid">
+                    Save
+                </MudButton>
+                @if (ID != 0)
+                {
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@OnDelete">
+                        Delete
+                    </MudButton>
+                }
+            </MudStack>
+        </MudForm>
+    </MudPaper>
 </MudContainer>

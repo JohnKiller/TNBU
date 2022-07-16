@@ -6,7 +6,7 @@ using TNBU.GUI.EF;
 using TNBU.GUI.EF.Models;
 
 namespace TNBU.GUI.Pages.Configuration.WiFi {
-	public partial class WiFiList :IDisposable{
+	public partial class WiFiList : IDisposable {
 		[Inject] public IDbContextFactory<DB> DBS { get; set; } = null!;
 		[Inject] public NavigationManager NavigationManager { get; set; } = null!;
 
@@ -17,7 +17,7 @@ namespace TNBU.GUI.Pages.Configuration.WiFi {
 			dbContext = DBS.CreateDbContext();
 		}
 
-		void OnRowClick(TableRowClickEventArgs<WiFiNetwork> e) {
+		void OnRowClick(DataGridRowClickEventArgs<WiFiNetwork> e) {
 			NavigationManager.NavigateTo("/configuration/wifi/edit/" + e.Item.ID);
 		}
 

@@ -1,0 +1,20 @@
+@page "/configuration/devices"
+
+<PageTitle>Devices</PageTitle>
+
+<MudContainer Class="mt-8">
+    <MudDataGrid T="Models.Device" Items="@DeviceManager.Devices.Values" Sortable="true" Filterable="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Devices</MudText>
+        </ToolBarContent>
+        <Columns>
+            <Column T="Models.Device" Field="MAC" />
+            <Column T="Models.Device" Field="Model" />
+            <Column T="Models.Device" Field="IP" />
+            <Column T="Models.Device" Field="Status" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Models.Device" />
+        </PagerContent>
+    </MudDataGrid>
+</MudContainer>

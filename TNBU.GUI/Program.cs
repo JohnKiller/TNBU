@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using TNBU.GUI.EF;
+using TNBU.GUI.Services;
 
 namespace TNBU.GUI {
 	public class Program {
@@ -11,6 +12,8 @@ namespace TNBU.GUI {
 			builder.Services.AddServerSideBlazor();
 			builder.Services.AddMudServices();
 			builder.Services.AddDbContextFactory<DB>(opt => DB.ConfigureBuilder(opt));
+
+			builder.Services.AddSingleton<DeviceManagerService>();
 
 			var app = builder.Build();
 

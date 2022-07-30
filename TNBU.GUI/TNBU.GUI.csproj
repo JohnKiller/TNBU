@@ -15,4 +15,8 @@
 		<PackageReference Include="MudBlazor" Version="6.0.11" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\TNBU.Core\TNBU.Core.csproj" />
+	</ItemGroup>
+
 </Project>

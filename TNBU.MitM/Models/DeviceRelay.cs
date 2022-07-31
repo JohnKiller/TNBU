@@ -163,7 +163,7 @@ public class DeviceRelay {
 			using var client = new Renci.SshNet.SshClient(IP.ToString(), user, password);
 			client.Connect();
 			var ret = client.RunCommand(newcmd);
-			var result = ret.Execute();
+			var result = ret.Result;
 			logger.LogInformation("Response from real device: \"{result}\" exit code is {exit}", result, ret.ExitStatus);
 			return (result, ret.ExitStatus);
 		}

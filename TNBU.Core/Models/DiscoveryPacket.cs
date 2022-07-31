@@ -15,7 +15,7 @@ public class DiscoveryPacket {
 	public const byte PAYLOAD_MACIP = 0x02;
 	public const byte PAYLOAD_FIRMWARE = 0x03;
 	public const byte PAYLOAD_UPTIME = 0x0a;
-	public const byte PAYLOAD_LONGMODEL = 0x0b;
+	public const byte PAYLOAD_HOSTNAME = 0x0b;
 	public const byte PAYLOAD_SHORTMODEL2 = 0x0c;
 	public const byte PAYLOAD_SEQUENCE = 0x12;
 	public const byte PAYLOAD_SERIAL = 0x13;
@@ -33,7 +33,9 @@ public class DiscoveryPacket {
 
 	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
-	public string Model => GetPayloadAsString(PAYLOAD_LONGMODEL);
+	public string Model => GetPayloadAsString(PAYLOAD_SHORTMODEL);
+	public string HostName => GetPayloadAsString(PAYLOAD_HOSTNAME);
+	public bool IsDefault => Payloads.ContainsKey(PAYLOAD_IS_DEFAULT) && GetPayloadAsBoolean(PAYLOAD_IS_DEFAULT);
 
 	private static readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 

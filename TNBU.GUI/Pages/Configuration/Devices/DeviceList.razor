@@ -6,12 +6,24 @@
     <MudDataGrid T="Models.Device" Items="@DeviceManager.Devices.Values" Sortable="true" Filterable="true">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Devices</MudText>
+            <MudSpacer />
         </ToolBarContent>
         <Columns>
             <Column T="Models.Device" Field="Mac" />
             <Column T="Models.Device" Field="Model" />
+            <Column T="Models.Device" Field="HostName" />
             <Column T="Models.Device" Field="IP" />
             <Column T="Models.Device" Field="Status" />
+            <Column T="Models.Device">
+                <CellTemplate>
+                    @if (context.Item.IsAdoptable)
+                    {
+                        <ActionButton Action="() => DeviceManager.Adopt(context.Item)">
+                            Adopt
+                        </ActionButton>
+                    }
+                </CellTemplate>
+            </Column>
         </Columns>
         <PagerContent>
             <MudDataGridPager T="Models.Device" />

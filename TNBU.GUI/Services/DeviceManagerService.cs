@@ -12,19 +12,20 @@ namespace TNBU.GUI.Services {
 			if(!Devices.ContainsKey(mac)) {
 				Devices.Add(mac, new() {
 					Mac = mac,
-					IP = ip,
 					IsAssociated = false,
-					Model = dp.Model,
 				});
 			}
 			var device = Devices[mac];
 			device.IsConnected = true;
-			var isDefault = true;
-			try {
-				isDefault = dp.GetPayloadAsBoolean(DiscoveryPacket.PAYLOAD_IS_DEFAULT);
-			} catch { }
-			device.IsDefault = isDefault;
+			device.IsDefault = dp.IsDefault;
+			device.IP = ip;
+			device.Model = dp.Model;
+			device.HostName = dp.HostName;
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);
+		}
+
+		public async Task Adopt(Device device) {
+			await Task.Delay(2000);
 		}
 	}
 }

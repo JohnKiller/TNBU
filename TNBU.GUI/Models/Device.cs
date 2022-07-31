@@ -4,11 +4,13 @@ using System.Net.NetworkInformation;
 namespace TNBU.GUI.Models {
 	public class Device {
 		public PhysicalAddress Mac { get; set; } = null!;
-		public string Model { get; set; } = null!;
+		public string? Model { get; set; }
 		public IPAddress? IP { get; set; }
+		public string? HostName { get; set; }
 		public bool IsConnected { get; set; }
 		public bool IsDefault { get; set; }
 		public bool IsAssociated { get; set; }
+		public bool IsAdoptable => IsConnected && IsDefault && !IsAssociated;
 		public string Status {
 			get {
 				if(!IsConnected) {

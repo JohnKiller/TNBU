@@ -28,11 +28,19 @@ namespace TNBU.GUI.Services {
 						logger.LogInformation("Got probe packet from {ip}", pkt.RemoteEndPoint);
 						continue;
 					}
-					var decoded = DiscoveryPacket.Decode(pkt.Buffer);
-					logger.LogInformation("Got discovery packet from {ip}:\n{decoded}", pkt.RemoteEndPoint, decoded.ToString());
+					DiscoveryPacket decoded;
+					try {
+						decoded = DiscoveryPacket.Decode(pkt.Buffer);
+						logger.LogInformation("Got discovery packet from {ip}:\n{decoded}", pkt.RemoteEndPoint, decoded.ToString());
+					} catch(Exception ex) {
+						logger.LogError("Failed decoding discovery packet from {ip}: {message}", pkt.RemoteEndPoint, ex.Message);
+						continue;
+					}
 					deviceManagerService.GotDiscovery(decoded);
 				} catch(OperationCanceledException) {
 					break;
+				} catch(Exception ex) {
+					logger.LogError("DiscoveryService uncatched main-loop error: {message}", ex.Message);
 				}
 			}
 		}

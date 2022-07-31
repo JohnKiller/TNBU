@@ -14,6 +14,7 @@ namespace TNBU.GUI {
 			builder.Services.AddDbContextFactory<DB>(opt => DB.ConfigureBuilder(opt));
 
 			builder.Services.AddSingleton<DeviceManagerService>();
+			builder.Services.AddSingleton<IHostedService, DiscoveryService>();
 
 			var app = builder.Build();
 

@@ -20,5 +20,6 @@
         StateHasChanged();
         await Action.InvokeAsync();
         isRunning = false;
+        StateHasChanged();
     }
 }

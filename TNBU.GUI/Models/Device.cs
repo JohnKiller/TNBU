@@ -3,7 +3,7 @@ using System.Net.NetworkInformation;
 
 namespace TNBU.GUI.Models {
 	public class Device {
-		public PhysicalAddress MAC { get; set; } = null!;
+		public PhysicalAddress Mac { get; set; } = null!;
 		public string Model { get; set; } = null!;
 		public IPAddress? IP { get; set; }
 		public bool IsConnected { get; set; }

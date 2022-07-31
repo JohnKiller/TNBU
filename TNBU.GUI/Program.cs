@@ -8,6 +8,7 @@ namespace TNBU.GUI {
 		public static void Main(string[] args) {
 			var builder = WebApplication.CreateBuilder(args);
 
+			builder.Services.AddControllers();
 			builder.Services.AddRazorPages();
 			builder.Services.AddServerSideBlazor();
 			builder.Services.AddMudServices();
@@ -28,10 +29,11 @@ namespace TNBU.GUI {
 
 			app.UseRouting();
 
+			app.MapControllers();
 			app.MapBlazorHub();
 			app.MapFallbackToPage("/_Host");
 
-			app.Run();
+			app.Run("http://0.0.0.0:8081/");
 		}
 	}
 }

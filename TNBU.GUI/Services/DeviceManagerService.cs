@@ -1,4 +1,5 @@
 using Renci.SshNet;
+using System.Net;
 using System.Net.NetworkInformation;
 using TNBU.Core.Models;
 using TNBU.Core.Utils;
@@ -32,13 +33,34 @@ namespace TNBU.GUI.Services {
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);
 		}
 
+		public async Task<byte[]?> GotInform(InformPacket req, IPAddress ip) {
+			try {
+				req.Decrypt();
+			}catch(Exception ex) {
+				logger.LogError("Error decoding inform packet: {message}", ex.Message);
+				return null;
+			}
+			var mac = req.MACAddress;
+			if(!Devices.ContainsKey(mac)) {
+				Devices.Add(mac, new() {
+					Mac = mac,
+				});
+			}
+			var device = Devices[mac];
+			device.IsConnected = true;
+			device.IsAssociated = true;
+			device.IP = ip;
+			OnDeviceChange?.Invoke(device, EventArgs.Empty);
+			return null;
+		}
+
 		public async Task Adopt(Device device) {
 			if(device.IP == null) {
 				throw new Exception("Requested to adopt a device without an IP");
 			}
 			logger.LogInformation("Starting adoption task");
-			var ourIp = NetworkUtils.GetMyIPOnThisSubnet(device.IP);
-			var newcmd = $"/usr/bin/syswrapper.sh set-adopt http://{ourIp}:8080/inform {InformPacket.DEFAULT_KEY}";
+			var (ourIp, _) = NetworkUtils.GetMyIPOnThisSubnet(device.IP);
+			var newcmd = $"/usr/bin/syswrapper.sh set-adopt http://{ourIp}:8081/inform {InformPacket.DEFAULT_KEY}";
 			await Task.Run(() => {
 				try {
 					using var client = new SshClient(device.IP.ToString(), "ubnt", "ubnt");

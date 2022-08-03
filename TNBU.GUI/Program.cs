@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using TNBU.GUI.EF;
 using TNBU.GUI.Services;
+using TNBU.GUI.Services.ConfigurationBuilder;
 
 namespace TNBU.GUI {
 	public class Program {
@@ -15,6 +16,7 @@ namespace TNBU.GUI {
 			builder.Services.AddDbContextFactory<DB>(opt => DB.ConfigureBuilder(opt));
 
 			builder.Services.AddSingleton<DeviceManagerService>();
+			builder.Services.AddSingleton<ConfigurationBuilderService>();
 			builder.Services.AddSingleton<IHostedService, DiscoveryService>();
 
 			var app = builder.Build();

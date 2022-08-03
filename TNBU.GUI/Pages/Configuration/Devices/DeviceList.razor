@@ -11,8 +11,10 @@
         <Columns>
             <Column T="Models.Device" Field="Mac" />
             <Column T="Models.Device" Field="Model" />
+            <Column T="Models.Device" Field="ModelDisplay" />
             <Column T="Models.Device" Field="HostName" />
             <Column T="Models.Device" Field="IP" />
+            <Column T="Models.Device" Field="Firmware" />
             <Column T="Models.Device" Field="Status" />
             <Column T="Models.Device">
                 <CellTemplate>
@@ -21,6 +23,11 @@
                         <ActionButton Action="() => Adopt(context.Item)">
                             Adopt
                         </ActionButton>
+                    }
+                    @if (context.Item.IsAdopted && !context.Item.IsAdopting && !context.Item.ResetRequested) {
+                        <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => context.Item.ResetRequested = true">
+                            Forget
+                        </MudButton>
                     }
                 </CellTemplate>
             </Column>

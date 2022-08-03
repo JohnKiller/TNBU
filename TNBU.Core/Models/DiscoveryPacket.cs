@@ -35,6 +35,7 @@ public class DiscoveryPacket {
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
 	public string Model => GetPayloadAsString(PAYLOAD_SHORTMODEL);
 	public string HostName => GetPayloadAsString(PAYLOAD_HOSTNAME);
+	public string FirmwareVersion => GetPayloadAsString(PAYLOAD_VERSION);
 	public bool IsDefault => Payloads.ContainsKey(PAYLOAD_IS_DEFAULT) && GetPayloadAsBoolean(PAYLOAD_IS_DEFAULT);
 
 	private static readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);

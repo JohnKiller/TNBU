@@ -83,7 +83,7 @@ public class DeviceRelay {
 
 		var fingerprint = decodedBody["fingerprint"];
 
-		req.Body = req.Body.Replace(FakeInformUrl, Config.InformURL);
+		req.Body = req.Body.Replace(Config.InformURL, FakeInformUrl);
 		req.Body = req.Body.Replace(IP.ToString(), FakeIP.ToString());
 		req.Body = req.Body.Replace(Serial, FakeSerial);
 		if(fingerprint != null) {

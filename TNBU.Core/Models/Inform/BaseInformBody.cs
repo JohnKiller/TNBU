@@ -45,7 +45,7 @@ namespace TNBU.Core.Models.Inform {
 		public int uptime { get; set; }
 		public string? version { get; set; }
 
-		public Radio_Table[] radio_table { get; set; }
+		public Radio_Table[]? radio_table { get; set; }
 	}
 
 	public class Radio_Table {

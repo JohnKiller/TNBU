@@ -45,5 +45,7 @@ namespace TNBU.GUI.Models {
 		public ManagementConfig? ManagementConfig { get; set; }
 
 		public bool ResetRequested { get; set; }
+
+		public List<PhysicalRadio> PhysicalRadios { get; set; } = new();
 	}
 }

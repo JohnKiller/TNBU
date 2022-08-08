@@ -57,7 +57,7 @@ namespace TNBU.GUI.Services {
 			}
 			var device = Devices[mac];
 			device.IsConnected = true;
-			device.IsAdopted = true;
+			device.IsAdopted = true; //check if serial already adopted
 			device.IP = ip;
 
 			var request = JsonSerializer.Deserialize<BaseInformBody>(req.Body);
@@ -66,10 +66,18 @@ namespace TNBU.GUI.Services {
 				return null;
 			}
 
+			device.IsDefault = request.@default;
 			device.HostName = request.hostname;
 			device.Model = request.model;
 			device.ModelDisplay = request.model_display;
 			device.Firmware = request.version;
+
+			device.PhysicalRadios.Clear();
+			if(request.radio_table != null) {
+				foreach(var r in request.radio_table) {
+					device.PhysicalRadios.Add(new(r.name));
+				}
+			}
 
 			configurationBuilder.UpdateDeviceConfiguration(device);
 

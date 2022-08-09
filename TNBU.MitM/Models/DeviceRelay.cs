@@ -133,6 +133,36 @@ public class DeviceRelay {
 			hasChanged = true;
 		}
 
+		/* //MESH v3 adoption process:
+		 * controller finds isolated APs using other AP scan result
+		 * to adopt, it asks the closest AP to connect to it
+		 * by issuing set-meshv3-payload with the mac of the device
+		 * after that, the new AP gets bridged to br0 and is available on the network
+		 * then it's the standard adoption process like if it was connected by wire
+		var type = (string?)respBody["_type"];
+		switch(type) {
+			case "noop":
+				break;
+			case "setparam":
+				Console.WriteLine("setparam");
+				break;
+			case "cmd":
+				var cmd = (string?)respBody["cmd"];
+				switch(cmd) {
+					case "set-meshv3-payload":
+						Console.WriteLine($"set-meshv3-payload {respBody["mac"]}");
+						break;
+					case "unset-meshv3-payload":
+						Console.WriteLine("unset-meshv3-payload");
+						break;
+					default:
+						throw new NotImplementedException();
+				}
+				break;
+			default:
+				throw new NotImplementedException();
+		}*/
+
 		if(hasChanged) {
 			SaveConfig();
 		}

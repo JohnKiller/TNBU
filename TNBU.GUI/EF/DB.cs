@@ -28,6 +28,14 @@ namespace TNBU.GUI.EF {
 				SSID = "TNBU Test Network 2",
 				Password = "testnetwork2"
 			});
+			WiFiNetworks.Add(new WiFiNetwork {
+				SSID = "TNBU Test Network 3",
+				Password = "testnetwork3"
+			});
+			WiFiNetworks.Add(new WiFiNetwork {
+				SSID = "TNBU Test Network 4",
+				Password = "testnetwork4"
+			});
 
 			SaveChanges();
 		}

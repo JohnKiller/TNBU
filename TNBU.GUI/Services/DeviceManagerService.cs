@@ -132,9 +132,6 @@ namespace TNBU.GUI.Services {
 			if(device.IP == null) {
 				throw new Exception("Requested to adopt a device without an IP");
 			}
-			if(!configurationBuilder.IsDeviceSupported(device)) {
-				throw new Exception("This device is not currently supported!");
-			}
 			logger.LogInformation("Starting adoption task");
 			var (ourIp, _) = NetworkUtils.GetMyIPOnThisSubnet(device.IP);
 			var newcmd = $"/usr/bin/syswrapper.sh set-adopt http://{ourIp}:8081/inform {InformPacket.DEFAULT_KEY}";

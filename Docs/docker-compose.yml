@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   unifi-controller:
-    image: lscr.io/linuxserver/unifi-controller:latest
+    image: lscr.io/linuxserver/unifi-controller:7.2.92
     container_name: unifi-controller
     environment:
       - PUID=1000

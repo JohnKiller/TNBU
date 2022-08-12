@@ -57,7 +57,7 @@ namespace TNBU.GUI.Services {
 			}
 			var device = Devices[mac];
 			device.IsConnected = true;
-			device.IsAdopted = true; //check if serial already adopted
+			device.IsAdopted = true; //TODO: check if serial already adopted (manual ssh set-inform)
 			device.IP = ip;
 
 			var request = JsonSerializer.Deserialize<BaseInformBody>(req.Body);
@@ -129,6 +129,7 @@ namespace TNBU.GUI.Services {
 		}
 
 		public async Task Adopt(Device device) {
+			//TODO: if the device is known, we should check ssh key
 			if(device.IP == null) {
 				throw new Exception("Requested to adopt a device without an IP");
 			}

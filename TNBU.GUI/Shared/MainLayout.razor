@@ -1,27 +1,21 @@
 @inherits LayoutComponentBase
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
-<MudLayout>
-    <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        TNBU
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
+<div class="wrapper">
+    <NavMenu>
+        <ListNavMenuItem>
+            <NavMenuItem Link="/" Icon="home" Name="Dashboard" />
+            <NavMenuItem Link="/configuration/" Icon="settings" Name="Configuration">
+                <ListNavMenuItem>
+                    <NavMenuItem Link="/configuration/wifi" Icon="user" Name="WiFi" />
+                    <NavMenuItem Link="/configuration/devices" Icon="user" Name="Devices" />
+                </ListNavMenuItem>
+            </NavMenuItem>
+        </ListNavMenuItem>
+    </NavMenu>
+    <div class="page-wrapper">
         @Body
-    </MudMainContent>
-</MudLayout>
+    </div>
+</div>
 
-@code {
-    bool _drawerOpen = true;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-}
+<BlazoredToasts />
+<MessageModal />

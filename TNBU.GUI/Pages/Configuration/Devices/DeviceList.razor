@@ -1,39 +1,67 @@
 @page "/configuration/devices"
 
-<PageTitle>Devices</PageTitle>
-
-<MudContainer Class="mt-8">
-    <MudDataGrid T="Models.Device" Items="@DeviceManager.Devices.Values" Sortable="true" Filterable="true">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Devices</MudText>
-            <MudSpacer />
-        </ToolBarContent>
-        <Columns>
-            <Column T="Models.Device" Field="Mac" />
-            <Column T="Models.Device" Field="Model" />
-            <Column T="Models.Device" Field="ModelDisplay" />
-            <Column T="Models.Device" Field="HostName" />
-            <Column T="Models.Device" Field="IP" />
-            <Column T="Models.Device" Field="Firmware" />
-            <Column T="Models.Device" Field="Status" />
-            <Column T="Models.Device">
-                <CellTemplate>
-                    @if (context.Item.IsAdoptable)
+<PageLayout Title="Devices" SubTitle="Configuration">
+    <PageBody>
+        @if (DeviceManager.Devices.Any())
+        {
+            <div class="card">
+                <table class="table">
+                    <tr>
+                        <th>Serial</th>
+                        <th>Model</th>
+                        <th>Hostname</th>
+                        <th>IP</th>
+                        <th>Firmware</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    @foreach (var (serial, device) in DeviceManager.Devices)
                     {
-                        <ActionButton Action="() => Adopt(context.Item)">
-                            Adopt
-                        </ActionButton>
+                        <tr>
+                            <td>@serial</td>
+                            <td>@device.ModelDisplay</td>
+                            <td>@device.HostName</td>
+                            <td>@device.IP</td>
+                            <td>@device.Firmware</td>
+                            <td>
+                                <span class="status status-yellow">
+                                    <span class="status-dot status-dot-animated"></span>
+                                    @device.Status
+                                </span>
+                            </td>
+                            <td>
+                                @if (device.IsAdoptable)
+                                {
+                                    <ActionButton Action="() => Adopt(device)">
+                                        Adopt
+                                    </ActionButton>
+                                }
+                                @if (device.IsAdopted && !device.IsAdopting && !device.ResetRequested)
+                                {
+                                    <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
+                                        <Icon Name="trash" />
+                                        Forget
+                                    </button>
+                                }
+                            </td>
+                        </tr>
                     }
-                    @if (context.Item.IsAdopted && !context.Item.IsAdopting && !context.Item.ResetRequested) {
-                        <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => context.Item.ResetRequested = true">
-                            Forget
-                        </MudButton>
-                    }
-                </CellTemplate>
-            </Column>
-        </Columns>
-        <PagerContent>
-            <MudDataGridPager T="Models.Device" />
-        </PagerContent>
-    </MudDataGrid>
-</MudContainer>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="container-xl d-flex flex-column justify-content-center">
+                <div class="empty">
+                    <div class="empty-img">
+                        <img src="/img/undraw_broadcast_jhwx.svg" height="128" alt="">
+                    </div>
+                    <p class="empty-title">No results found</p>
+                    <p class="empty-subtitle text-muted">
+                        Connect a device to your network to begin.
+                    </p>
+                </div>
+            </div>
+        }
+    </PageBody>
+</PageLayout>

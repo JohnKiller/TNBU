@@ -1,24 +1,49 @@
 @page "/configuration/wifi/new"
 @page "/configuration/wifi/edit/{id:long}"
 
-<PageTitle>Edit "@row.SSID"</PageTitle>
+<PageTitle></PageTitle>
 
-<MudContainer Class="mt-8">
-    <MudPaper Class="pa-4">
-        <MudForm @bind-IsValid="@IsFormValid" ValidationDelay="0">
-            <MudTextField @bind-Value="row.SSID" Label="SSID" Required="true" />
-            <MudTextField @bind-Value="row.Password" Label="Password" Required="true" />
-            <MudStack Row="true" Class="mt-8">
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@OnSave" Disabled="!IsFormValid">
-                    Save
-                </MudButton>
-                @if (ID != 0)
-                {
-                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@OnDelete">
-                        Delete
-                    </MudButton>
-                }
-            </MudStack>
-        </MudForm>
-    </MudPaper>
-</MudContainer>
+<EditForm EditContext="FormContext" OnValidSubmit="OnSave">
+    <PageLayout Title="@($"Edit {row.SSID}")" SubTitle="WiFi Networks Configuration">
+        <Actions>
+            @if (ID != 0)
+            {
+                <button type="button" class="btn btn-danger d-inline-block" @onclick="OnDelete">
+                    <Icon Name="trash" />
+                    Delete
+                </button>
+            }
+            <button type="submit" class="btn btn-primary d-inline-block">
+                <Icon Name="device-floppy" />
+                Save
+            </button>
+        </Actions>
+        <PageBody>
+            <DataAnnotationsValidator />
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">SSID</label>
+                                <InputText @bind-Value="row.SSID" class="form-control" />
+                                <div class="invalid-feedback">
+                                    <ValidationMessage For="() => row.SSID" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Password</label>
+                                <InputText @bind-Value="row.Password" class="form-control" />
+                                <div class="invalid-feedback">
+                                    <ValidationMessage For="() => row.Password" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </PageBody>
+    </PageLayout>
+</EditForm>

@@ -1,0 +1,8 @@
+<svg height="@Size" width="@Size">
+    <use href="/libraries/tabler-icons/tabler-sprite.svg#tabler-@Name"></use>
+</svg>
+
+@code {
+    [Parameter, EditorRequired] public string Name { get; set; } = null!;
+    [Parameter] public int Size { get; set; } = 24;
+}

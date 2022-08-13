@@ -1,0 +1,40 @@
+@if (IsSubItem)
+{
+    <a class="dropdown-item @(IsActive ? "active" : "")" href="@Link">
+        @Name
+    </a>
+}
+else if (ListNavMenuItem == null)
+{
+    <li class="nav-item @(IsActive ? "active" : "")">
+        <a class="nav-link" href="@Link">
+            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <Icon Name="@Icon" />
+            </span>
+            <span class="nav-link-title">
+                @Name
+            </span>
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-item dropdown @(IsActive ? "active" : "")">
+        <a class="nav-link dropdown-toggle cursor-pointer" @onclick="ToggleExpander">
+            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <Icon Name="@Icon" />
+            </span>
+            <span class="nav-link-title">
+                @Name
+            </span>
+        </a>
+        @if (Expanded)
+        {
+            <div class="dropdown-menu show" data-bs-popper>
+                <CascadingValue Value="true" Name="IsSubItem">
+                    @ListNavMenuItem
+                </CascadingValue>
+            </div>
+        }
+    </li>
+}

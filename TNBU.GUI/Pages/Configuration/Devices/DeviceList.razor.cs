@@ -1,12 +1,12 @@
+using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using TNBU.GUI.Models;
 using TNBU.GUI.Services;
 
 namespace TNBU.GUI.Pages.Configuration.Devices {
-	public partial class DeviceList : IDisposable{
+	public partial class DeviceList : IDisposable {
 		[Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
-		[Inject] public ISnackbar Snackbar { get; set; } = null!;
+		[Inject] public IToastService ToastService { get; set; } = null!;
 
 		protected override void OnInitialized() {
 			DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;
@@ -24,9 +24,9 @@ namespace TNBU.GUI.Pages.Configuration.Devices {
 		async Task Adopt(Device device) {
 			try {
 				await DeviceManager.Adopt(device);
-				Snackbar.Add("Adoption request sent!", Severity.Success);
-			}catch(Exception ex) {
-				Snackbar.Add(ex.Message, Severity.Error);
+				ToastService.ShowSuccess("Adoption request sent!");
+			} catch(Exception ex) {
+				ToastService.ShowError(ex.Message);
 			}
 		}
 	}

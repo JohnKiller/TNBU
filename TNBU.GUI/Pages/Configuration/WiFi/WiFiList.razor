@@ -1,24 +1,67 @@
 @page "/configuration/wifi"
 
-<PageTitle>WiFi Networks</PageTitle>
-
-<MudContainer Class="mt-8">
-    @if (dbContext != null)
-    {
-        <MudDataGrid T="EF.Models.WiFiNetwork" Items="@dbContext.WiFiNetworks" Sortable="true" Filterable="true" RowClick="@OnRowClick">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">WiFi Networks</MudText>
-                <MudSpacer />
-                <MudButton Class="mr-2" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@OnNewClick">New</MudButton>
-            </ToolBarContent>
-            <Columns>
-                <Column T="EF.Models.WiFiNetwork" Field="ID" />
-                <Column T="EF.Models.WiFiNetwork" Field="SSID" />
-                <Column T="EF.Models.WiFiNetwork" Field="Password" />
-            </Columns>
-            <PagerContent>
-                <MudDataGridPager T="EF.Models.WiFiNetwork" />
-            </PagerContent>
-        </MudDataGrid>
-    }
-</MudContainer>
+<PageLayout Title="WiFi Networks" SubTitle="Configuration">
+    <Actions>
+        <a href="/configuration/wifi/new" class="btn btn-primary d-inline-block">
+            <Icon Name="plus" />
+            Add
+        </a>
+    </Actions>
+    <PageBody>
+        @if (dbContext != null)
+        {
+            @if (dbContext.WiFiNetworks.Any())
+            {
+                <div class="card">
+                    <div class="list-group list-group-flush list-group-hoverable">
+                        @foreach (var wifi in @dbContext.WiFiNetworks.OrderBy(x => x.ID))
+                        {
+                            var url = $"/configuration/wifi/edit/{wifi.ID}";
+                            <div class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <a href="@url">
+                                            <span class="avatar">
+                                                @wifi.ID
+                                                <span class="badge bg-green"></span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col text-truncate">
+                                        <a href="@url" class="text-reset d-block">@wifi.SSID</a>
+                                        <div class="d-block text-muted text-truncate mt-n1">@wifi.Password</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="@url" class="list-group-item-actions">
+                                            <Icon Name="pencil" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="container-xl d-flex flex-column justify-content-center">
+                    <div class="empty">
+                        <div class="empty-img">
+                            <img src="/img/undraw_broadcast_jhwx.svg" height="128" alt="">
+                        </div>
+                        <p class="empty-title">No results found</p>
+                        <p class="empty-subtitle text-muted">
+                            Add a new network to begin.
+                        </p>
+                        <div class="empty-action">
+                            <a href="/configuration/wifi/new" class="btn btn-primary">
+                                <Icon Name="plus" />
+                                Add your first wifi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </PageBody>
+</PageLayout>

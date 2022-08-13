@@ -1,0 +1,39 @@
+<PageTitle>@Title</PageTitle>
+
+<div class="container-xl">
+    <div class="page-header d-print-none">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                @if (SubTitle != null)
+                {
+                    <div class="page-pretitle">
+                        @SubTitle
+                    </div>
+                }
+                <h2 class="page-title">
+                    @Title
+                </h2>
+            </div>
+            @if (Actions != null)
+            {
+                <div class="col-12 col-md-auto ms-auto d-print-none">
+                    <div class="btn-list">
+                        @Actions
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="page-body">
+    <div class="container-xl">
+        @PageBody
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = null!;
+    [Parameter] public string? SubTitle { get; set; }
+    [Parameter] public RenderFragment? Actions { get; set; }
+    [Parameter, EditorRequired] public RenderFragment PageBody { get; set; } = null!;
+}

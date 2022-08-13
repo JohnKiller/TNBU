@@ -1,25 +1,36 @@
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Disabled="@isRunning" OnClick="OnClick">
+<button class="btn btn-primary" @onclick="OnClick" disabled="@isRunning">
     @if (isRunning)
     {
-        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <div class="spinner-border" role="status"></div>
     }
     else
     {
-        <MudIcon Icon="@Icons.Material.Filled.Add" />
+        @if (Icon != null)
+        {
+            <Icon Name="@Icon" />
+        }
     }
-    <MudText Class="ms-2">@ChildContent</MudText>
-</MudButton>
+    @ChildContent
+</button>
 
 @code {
     [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter] public string? Icon { get; set; }
     [Parameter, EditorRequired] public EventCallback Action { get; set; }
     bool isRunning = false;
 
-    async void OnClick() {
+    async void OnClick()
+    {
         isRunning = true;
         StateHasChanged();
-        await Action.InvokeAsync();
-        isRunning = false;
-        StateHasChanged();
+        try
+        {
+            await Action.InvokeAsync();
+        }
+        finally
+        {
+            isRunning = false;
+            StateHasChanged();
+        }
     }
 }

@@ -1,5 +1,5 @@
+using Blazored.Toast;
 using Microsoft.EntityFrameworkCore;
-using MudBlazor.Services;
 using TNBU.GUI.EF;
 using TNBU.GUI.Services;
 using TNBU.GUI.Services.ConfigurationBuilder;
@@ -12,8 +12,10 @@ namespace TNBU.GUI {
 			builder.Services.AddControllers();
 			builder.Services.AddRazorPages();
 			builder.Services.AddServerSideBlazor();
-			builder.Services.AddMudServices();
 			builder.Services.AddDbContextFactory<DB>(opt => DB.ConfigureBuilder(opt));
+
+			builder.Services.AddBlazoredToast();
+			builder.Services.AddScoped<MessageService>();
 
 			builder.Services.AddSingleton<DeviceManagerService>();
 			builder.Services.AddSingleton<ConfigurationBuilderService>();

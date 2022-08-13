@@ -1,0 +1,36 @@
+@using System.ComponentModel
+@using static TNBU.GUI.Services.MessageService
+<Modal @ref="Ref">
+    @if ((Buttons & MessageButton.Close) == MessageButton.Close)
+    {
+        <button @onclick="() => OnClick(MessageButton.Close)" type="button" class="btn-close" aria-label="Close"></button>
+    }
+    <div class="modal-status bg-@Color"></div>
+    <div class="modal-body text-center py-4">
+        <div class="mb-2 text-@Color">
+            <Icon Name="@Icon" Size="56" />
+        </div>
+        <h3>@Title</h3>
+        <div class="text-muted">@Message</div>
+    </div>
+    <div class="modal-footer">
+        <div class="w-100">
+            <div class="row">
+                @foreach (MessageButton btn in Enum.GetValues(typeof(MessageButton)))
+                {
+                    if (btn.HasDescription())
+                    {
+                        if ((Buttons & btn) == btn)
+                        {
+                            <div class="col">
+                                <button @onclick="() => OnClick(btn)" class="w-100 btn @(PrimaryButton == btn ? $"btn-{Color}" : "")">
+                                    @btn.GetDescription()
+                                </button>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</Modal>

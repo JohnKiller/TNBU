@@ -1,0 +1,30 @@
+@if (ShowModal)
+{
+    <div class="modal modal-blur fade show" tabindex="-1" role="dialog" style="display:block">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+
+    public bool ShowModal = false;
+
+    public void Open()
+    {
+        ShowModal = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ShowModal = false;
+        StateHasChanged();
+    }
+}

@@ -361,7 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
 /TNBU.MitM/discovered_devices
+
 /TNBU.GUI/Application.db
 /TNBU.GUI/Application.db-shm
 /TNBU.GUI/Application.db-wal
+/TNBU.GUI/wwwroot/libraries

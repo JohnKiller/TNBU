@@ -37,6 +37,9 @@ namespace TNBU.GUI.Services {
 			}
 			device.IP = ip;
 			device.Model = dp.Model;
+			if(device.ModelDisplay == null) {
+				device.ModelDisplay = dp.Model;
+			}
 			device.HostName = dp.HostName;
 			device.Firmware = dp.FirmwareVersion;
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);

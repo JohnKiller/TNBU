@@ -27,15 +27,32 @@ public class DiscoveryPacket {
 	public const byte PAYLOAD_IS_DHCP_BOUND = 0x20;
 	public const byte PAYLOAD_SSHPORT = 0x1c;
 
+	public const byte PAYLOAD_IS_PROBE = 0x10; //not sure
+
 	public byte Version { get; set; }
 	public byte DiscoveryType { get; set; }
 	public Dictionary<byte, byte[]> Payloads { get; } = new();
 
 	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
-	public string Model => GetPayloadAsString(PAYLOAD_SHORTMODEL);
+	public string Model {
+		get {
+			if(Payloads.ContainsKey(PAYLOAD_SHORTMODEL)) {
+				return GetPayloadAsString(PAYLOAD_SHORTMODEL);
+			}
+			return GetPayloadAsString(PAYLOAD_SHORTMODEL2);
+		}
+	}
 	public string HostName => GetPayloadAsString(PAYLOAD_HOSTNAME);
-	public string FirmwareVersion => GetPayloadAsString(PAYLOAD_VERSION);
+	public string? FirmwareVersion {
+		get {
+			if(Payloads.ContainsKey(PAYLOAD_VERSION)) {
+				return GetPayloadAsString(PAYLOAD_VERSION);
+			}
+			return null;
+		}
+	}
+	public bool IsProbe => Payloads.ContainsKey(PAYLOAD_IS_PROBE);
 	public bool IsDefault => Payloads.ContainsKey(PAYLOAD_IS_DEFAULT) && GetPayloadAsBoolean(PAYLOAD_IS_DEFAULT);
 
 	private static readonly Socket udpClient = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);

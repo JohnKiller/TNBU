@@ -31,9 +31,11 @@ namespace TNBU.GUI.Services {
 			}
 			var device = Devices[mac];
 			device.IsConnected = true;
-			device.IsDefault = dp.IsDefault;
-			if(device.IsDefault) {
-				device.IsAdopted = false;
+			if(!dp.IsProbe) {
+				device.IsDefault = dp.IsDefault;
+				if(device.IsDefault) {
+					device.IsAdopted = false;
+				}
 			}
 			device.IP = ip;
 			device.Model = dp.Model;
@@ -41,7 +43,10 @@ namespace TNBU.GUI.Services {
 				device.ModelDisplay = dp.Model;
 			}
 			device.HostName = dp.HostName;
-			device.Firmware = dp.FirmwareVersion;
+			var fw = dp.FirmwareVersion;
+			if(fw != null) {
+				device.Firmware = fw;
+			}
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);
 		}
 

@@ -90,6 +90,12 @@ namespace TNBU.GUI.Services {
 					device.PhysicalRadios.Add(new(r.name));
 				}
 			}
+			device.PhysicalSwitchPorts.Clear();
+			if(request.port_table != null) {
+				foreach(var p in request.port_table) {
+					device.PhysicalSwitchPorts.Add(new(p.port_idx));
+				}
+			}
 
 			configurationBuilder.UpdateDeviceConfiguration(device);
 

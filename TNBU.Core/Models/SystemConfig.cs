@@ -26,9 +26,11 @@ namespace TNBU.Core.Models {
 		public CfgRedirector Redirector { get; set; } = new();
 		public CfgIpSet IpSet { get; set; } = new();
 		public CfgDnsMasq DnsMasq { get; set; } = new();
+		public CfgRps Rps { get; set; } = new();
 		public CfgSysLog SysLog { get; set; } = new();
 		public CfgSshd Sshd { get; set; } = new();
 		public CfgNtpClient NtpClient { get; set; } = new();
+		public CfgLcm Lcm { get; set; } = new();
 		public CfgSwitch Switch { get; set; } = new();
 		public override string ToString() {
 			return $@"
@@ -80,6 +82,8 @@ namespace TNBU.Core.Models {
 {IpSet}
 # dnsmasq
 {DnsMasq}
+#rps
+{Rps}
 # syslog
 {SysLog}
 # sshd
@@ -88,6 +92,8 @@ namespace TNBU.Core.Models {
 {NtpClient}
 # switch
 {Switch}
+# lcm
+{Lcm}
 # DPI Fingerprint
 # misc
 ".Replace(Environment.NewLine, "\n");

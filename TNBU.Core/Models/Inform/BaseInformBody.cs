@@ -46,6 +46,7 @@ namespace TNBU.Core.Models.Inform {
 		public string? version { get; set; }
 
 		public Radio_Table[]? radio_table { get; set; }
+		public Port_Table[]? port_table { get; set; }
 	}
 
 	public class Radio_Table {
@@ -67,6 +68,50 @@ namespace TNBU.Core.Models.Inform {
 		public int radio_caps2 { get; set; }
 
 		public Scan_Table[]? scan_table { get; set; }
+	}
+
+	public class Port_Table {
+		public int anomalies { get; set; }
+		public bool autoneg { get; set; }
+		public string? dot1x_mode { get; set; }
+		public string? dot1x_status { get; set; }
+		public bool enable { get; set; }
+		public bool flowctrl_rx { get; set; }
+		public bool flowctrl_tx { get; set; }
+		public bool full_duplex { get; set; }
+		public bool is_uplink { get; set; }
+		public bool jumbo { get; set; }
+		public object[]? mac_table { get; set; }
+		public string? media { get; set; }
+		public int poe_caps { get; set; }
+		public string? poe_class { get; set; }
+		public string? poe_current { get; set; }
+		public bool poe_enable { get; set; }
+		public bool poe_good { get; set; }
+		public string? poe_mode { get; set; }
+		public string? poe_power { get; set; }
+		public string? poe_voltage { get; set; }
+		public int port_idx { get; set; }
+		public bool port_poe { get; set; }
+		public int rx_broadcast { get; set; }
+		public int rx_bytes { get; set; }
+		public int rx_dropped { get; set; }
+		public int rx_errors { get; set; }
+		public int rx_multicast { get; set; }
+		public int rx_packets { get; set; }
+		public int satisfaction { get; set; }
+		public int satisfaction_reason { get; set; }
+		public int speed { get; set; }
+		public int speed_caps { get; set; }
+		public int stp_pathcost { get; set; }
+		public string? stp_state { get; set; }
+		public int tx_broadcast { get; set; }
+		public int tx_bytes { get; set; }
+		public int tx_dropped { get; set; }
+		public int tx_errors { get; set; }
+		public int tx_multicast { get; set; }
+		public int tx_packets { get; set; }
+		public bool up { get; set; }
 	}
 
 	public class Athstats {

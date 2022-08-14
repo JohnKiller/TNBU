@@ -21,4 +21,4 @@ Help in this area is very appreciated: if you have a device not currently suppor
 
 ## TNBU.GUI
 
-Alternative controller implementation. At this time it can only adopt access points (tested with UAP-AC-LR, UAP-nanoHD and U6-LR) and set up a WPA2 network. *Please don't adopt a switch*: although you will see the device listed, the adoption will actually work but the configuration will be completely borked, and you will need to manually reset the device.
+Alternative controller implementation. At this time it can only adopt access points (tested with UAP-AC-LR, UAP-nanoHD and U6-LR) with a WPA2 network, and switches (tested with USW-Pro-48-PoE).

@@ -95,6 +95,7 @@ namespace TNBU.GUI.Models {
 		public bool IsResetting { get; set; }
 
 		public List<PhysicalRadio> PhysicalRadios { get; set; } = new();
+		public List<PhysicalSwitchPort> PhysicalSwitchPorts { get; set; } = new();
 
 		public void OnlinePing() {
 			LastPing = DateTime.UtcNow;

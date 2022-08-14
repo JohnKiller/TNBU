@@ -9,7 +9,7 @@ namespace TNBU.Core.Models {
 				stun_url=
 			*/
 			return $@"
-capability=notif,notif-assoc-stat
+capability=notif,fastapply-bg,notif-assoc-stat
 cfgversion={CfgVersion}
 led_enabled={(LedEnabled ? "true" : "false")}
 report_crash=true

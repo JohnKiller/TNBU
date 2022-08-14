@@ -26,22 +26,9 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 		}
 
 		private SystemConfig Build(Device d) {
-			var br0 = new CfgBridgeEntry() {
-				DevName = "br0",
-				Ports = { "eth0" }
-			};
 			var ret = new SystemConfig {
-				Bridge = new() {
-					Entries = {
-						br0
-					}
-				},
 				Netconf = new() {
 					Entries = {
-						new() {
-							DevName = "br0",
-							Up = true,
-						},
 						new() {
 							DevName = "eth0",
 							Up = true,
@@ -49,8 +36,25 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 					}
 				}
 			};
+			if(d.PhysicalSwitchPorts.Count > 0) {
+				foreach(var port in d.PhysicalSwitchPorts) {
+					ret.Switch.Entries.Add(new() {
+
+					});
+				}
+			}
 			using var db = DBS.CreateDbContext();
 			if(d.PhysicalRadios.Count > 0) {
+				var br0 = new CfgBridgeEntry() {
+					DevName = "br0",
+					Ports = { "eth0" }
+				};
+				ret.Bridge.Entries.Add(br0);
+				ret.Dhcpc.DevName = br0.DevName;
+				ret.Netconf.Entries.Insert(0, new() {
+					DevName = br0.DevName,
+					Up = true,
+				});
 				var vDevs = new Dictionary<string, int>();
 				var isAth = !d.PhysicalRadios[0].Name.StartsWith("ra");
 				var athCounter = 0;

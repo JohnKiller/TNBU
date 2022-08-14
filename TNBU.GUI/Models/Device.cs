@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using TNBU.Core.Models;
+using TNBU.Core.Models.Inform;
 using TNBU.GUI.Services.FirmwareUpdate;
 
 namespace TNBU.GUI.Models {
@@ -96,6 +97,8 @@ namespace TNBU.GUI.Models {
 
 		public List<PhysicalRadio> PhysicalRadios { get; set; } = new();
 		public List<PhysicalSwitchPort> PhysicalSwitchPorts { get; set; } = new();
+
+		public BaseInformBody? Inform { get; set; }
 
 		public void OnlinePing() {
 			LastPing = DateTime.UtcNow;

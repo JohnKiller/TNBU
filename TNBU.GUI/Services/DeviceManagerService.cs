@@ -77,6 +77,7 @@ namespace TNBU.GUI.Services {
 				return null;
 			}
 
+			device.Inform = request;
 			device.IsDefault = request.@default;
 			device.HostName = request.hostname;
 			device.Model = request.model;

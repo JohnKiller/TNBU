@@ -1,8 +1,134 @@
 @page "/"
+@using TNBU.GUI.Services
+@implements IDisposable
 
 <PageLayout Title="Dashboard" SubTitle="Network overview">
     <PageBody>
-        Dashboard
+        <div class="row row-cards">
+            @foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
+            {
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                @d.ModelDisplay
+                                <span class="card-subtitle">@d.Mac</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>Uplink: <b>@d.Inform.uplink</b></li>
+                                @if (d.Inform.lldp_table != null && d.Inform.lldp_table.Length > 0)
+                                {
+                                    <li>
+                                        <b>LLDP:</b>
+                                        <ul>
+                                            @foreach (var lldp in d.Inform.lldp_table)
+                                            {
+                                                <li>
+                                                    chassis_descr: <b>@lldp.chassis_descr</b><br />
+                                                    chassis_id: <b>@lldp.chassis_id</b><br />
+                                                    is_wired: <b>@lldp.is_wired</b><br />
+                                                    local_port_idx: <b>@lldp.local_port_idx</b><br />
+                                                    local_port_name: <b>@lldp.local_port_name</b><br />
+                                                    port_id: <b>@lldp.port_id</b><br />
+                                                    port_descr: <b>@lldp.port_descr</b><br />
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                @if (d.Inform.port_table != null)
+                                {
+                                    <li>
+                                        <b>Port Table:</b>
+                                        <ul>
+                                            @foreach (var port in d.Inform.port_table.Where(x => x.up))
+                                            {
+                                                <li>
+                                                    port_idx: <b>@port.port_idx</b><br />
+                                                    is_uplink: <b>@port.is_uplink</b><br />
+                                                    poe_enable: <b>@port.poe_enable</b><br />
+                                                    stp_state: <b>@port.stp_state</b><br />
+                                                    @if (port.mac_table != null && port.mac_table.Length > 0)
+                                                    {
+                                                        <b>mac_table:</b>
+                                                        <ul>
+                                                            @foreach (var m in port.mac_table)
+                                                            {
+                                                                <li>
+                                                                    mac: <b>@m.mac</b><br />
+                                                                    ip: <b>@m.ip</b><br />
+                                                                    hostname: <b>@m.hostname</b><br />
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                @if (d.Inform.vap_table != null)
+                                {
+                                    <li>
+                                        <b>VAP Table:</b>
+                                        <ul>
+                                            @foreach (var vap in d.Inform.vap_table)
+                                            {
+                                                <li>
+                                                    usage: <b>@vap.usage</b><br />
+                                                    num_sta: <b>@vap.num_sta</b><br />
+                                                    essid: <b>@vap.essid</b><br />
+                                                    bssid: <b>@vap.bssid</b><br />
+                                                    id: <b>@vap.id</b><br />
+                                                    name: <b>@vap.name</b><br />
+                                                    radio: <b>@vap.radio</b><br />
+                                                    radio_name: <b>@vap.radio_name</b><br />
+                                                    @if (vap.sta_table != null && vap.sta_table.Length > 0)
+                                                    {
+                                                        <b>stations:</b>
+                                                        <ul>
+                                                            @foreach (var s in vap.sta_table)
+                                                            {
+                                                                <li>
+                                                                    hostname: <b>@s.hostname</b><br />
+                                                                    ip: <b>@s.ip</b><br />
+                                                                    mac: <b>@s.mac</b><br />
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </PageBody>
 </PageLayout>
 
+@code {
+    [Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;
+    }
+
+    private void DeviceManager_OnDeviceChange(object? sender, EventArgs e)
+    {
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        DeviceManager.OnDeviceChange -= DeviceManager_OnDeviceChange;
+    }
+}

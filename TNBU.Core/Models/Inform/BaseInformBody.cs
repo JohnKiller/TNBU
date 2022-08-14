@@ -18,6 +18,7 @@ namespace TNBU.Core.Models.Inform {
 
 		public bool isolated { get; set; }
 		public bool locating { get; set; }
+		public string? uplink { get; set; }
 
 		public string? anon_id { get; set; }
 		public string? hash_id { get; set; }
@@ -45,8 +46,195 @@ namespace TNBU.Core.Models.Inform {
 		public int uptime { get; set; }
 		public string? version { get; set; }
 
+		public Lldp_Table[]? lldp_table { get; set; }
+		public Vap_Table[]? vap_table { get; set; }
+
 		public Radio_Table[]? radio_table { get; set; }
 		public Port_Table[]? port_table { get; set; }
+
+	}
+
+	public class Vap_Table {
+		public Anomalies_Bar_Chart? anomalies_bar_chart { get; set; }
+		public Anomalies_Bar_Chart? anomalies_bar_chart_now { get; set; }
+		public int avg_client_signal { get; set; }
+		public string? bssid { get; set; }
+		public int bw { get; set; }
+		public int ccq { get; set; }
+		public int channel { get; set; }
+		public int dns_avg_latency { get; set; }
+		public string? essid { get; set; }
+		public int extchannel { get; set; }
+		public int icmp_avg_rtt { get; set; }
+		public string? id { get; set; }
+		public int mac_filter_rejections { get; set; }
+		public string? name { get; set; }
+		public int num_satisfaction_sta { get; set; }
+		public int num_sta { get; set; }
+		public string? radio { get; set; }
+		public string? radio_name { get; set; }
+		public Reasons_Bar_Chart? reasons_bar_chart { get; set; }
+		public Reasons_Bar_Chart? reasons_bar_chart_now { get; set; }
+		public int rx_bytes { get; set; }
+		public int rx_crypts { get; set; }
+		public int rx_dropped { get; set; }
+		public int rx_errors { get; set; }
+		public int rx_frags { get; set; }
+		public int rx_nwids { get; set; }
+		public int rx_packets { get; set; }
+		public Tcp_Stats? rx_tcp_stats { get; set; }
+		public int satisfaction { get; set; }
+		public int satisfaction_now { get; set; }
+		public int satisfaction_real { get; set; }
+		public Sta_Table[]? sta_table { get; set; }
+		public string? state { get; set; }
+		public int tx_bytes { get; set; }
+		public int tx_combined_retries { get; set; }
+		public int tx_data_mpdu_bytes { get; set; }
+		public int tx_dropped { get; set; }
+		public int tx_errors { get; set; }
+		public int tx_packets { get; set; }
+		public int tx_power { get; set; }
+		public int tx_retries { get; set; }
+		public int tx_rts_retries { get; set; }
+		public int tx_success { get; set; }
+		public Tcp_Stats? tx_tcp_stats { get; set; }
+		public int tx_total { get; set; }
+		public bool up { get; set; }
+		public string? usage { get; set; }
+		public int wifi_tx_attempts { get; set; }
+		public int wifi_tx_dropped { get; set; }
+		public Wifi_Latency? wifi_tx_latency_mov { get; set; }
+	}
+
+	public class Anomalies_Bar_Chart {
+		public int high_disconnect_count { get; set; }
+		public int high_dns_latency { get; set; }
+		public int high_icmp_rtt { get; set; }
+		public int high_tcp_latency { get; set; }
+		public int high_tcp_packet_loss { get; set; }
+		public int high_wifi_latency { get; set; }
+		public int high_wifi_retries { get; set; }
+		public int low_phy_rate { get; set; }
+		public int no_dhcp_response { get; set; }
+		public int poor_stream_eff { get; set; }
+		public int sleepy_client { get; set; }
+		public int sta_arp_timeout { get; set; }
+		public int sta_dns_timeout { get; set; }
+		public int sta_ip_timeout { get; set; }
+		public int weak_signal { get; set; }
+	}
+
+	public class Reasons_Bar_Chart {
+		public int no_dhcp_response { get; set; }
+		public int phy_rate { get; set; }
+		public int signal { get; set; }
+		public int sleepy_client { get; set; }
+		public int sta_arp_timeout { get; set; }
+		public int sta_disconnects { get; set; }
+		public int sta_dns_latency { get; set; }
+		public int sta_dns_timeout { get; set; }
+		public int sta_icmp_rtt { get; set; }
+		public int sta_ip_timeout { get; set; }
+		public int stream_eff { get; set; }
+		public int tcp_latency { get; set; }
+		public int tcp_packet_loss { get; set; }
+		public int wifi_latency { get; set; }
+		public int wifi_retries { get; set; }
+	}
+
+	public class Sta_Table {
+		public int anomalies { get; set; }
+		public int anomalies_now { get; set; }
+		public string? anon_client_id { get; set; }
+		public long auth_time { get; set; }
+		public bool authorized { get; set; }
+		public int ccq { get; set; }
+		public int dhcpend_time { get; set; }
+		public int dhcpstart_time { get; set; }
+		public int dns_avg_latency { get; set; }
+		public string? hostname { get; set; }
+		public int idletime { get; set; }
+		public string? ip { get; set; }
+		public bool is_11a { get; set; }
+		public bool is_11ac { get; set; }
+		public bool is_11n { get; set; }
+		public string? mac { get; set; }
+		public int noise { get; set; }
+		public int nss { get; set; }
+		public int rssi { get; set; }
+		public int rx_bytes { get; set; }
+		public int rx_bytes_mov { get; set; }
+		public int rx_mcast { get; set; }
+		public int rx_packets { get; set; }
+		public int rx_rate { get; set; }
+		public int rx_rate_mov { get; set; }
+		public int rx_retries { get; set; }
+		public Tcp_Stats? rx_tcp_stats { get; set; }
+		public int satisfaction { get; set; }
+		public int satisfaction_now { get; set; }
+		public int satisfaction_real { get; set; }
+		public int satisfaction_reason { get; set; }
+		public int satisfaction_reason_now { get; set; }
+		public int[]? satisfaction_subscores_now { get; set; }
+		public string? serialno { get; set; }
+		public int signal { get; set; }
+		public int skip_satisfaction { get; set; }
+		public int state { get; set; }
+		public bool state_ht { get; set; }
+		public bool state_pwrmgt { get; set; }
+		public int tx_bytes { get; set; }
+		public int tx_bytes_mov { get; set; }
+		public int tx_combined_retries { get; set; }
+		public int tx_data_mpdu_bytes { get; set; }
+		public int tx_mcs { get; set; }
+		public int tx_packets { get; set; }
+		public int tx_power { get; set; }
+		public int tx_rate { get; set; }
+		public int tx_rate_mov { get; set; }
+		public int tx_retries { get; set; }
+		public int tx_retries_mov { get; set; }
+		public int tx_rts_retries { get; set; }
+		public Tcp_Stats? tx_tcp_stats { get; set; }
+		public int tx_total { get; set; }
+		public int tx_total_mov { get; set; }
+		public int uptime { get; set; }
+		public int vlan_id { get; set; }
+		public int wifi_tx_attempts { get; set; }
+		public int wifi_tx_attempts_mov { get; set; }
+		public int wifi_tx_dropped { get; set; }
+		public int wifi_tx_dropped_mov { get; set; }
+		public Wifi_Latency? wifi_tx_latency_mov { get; set; }
+		public int wifi_tx_success { get; set; }
+	}
+
+	public class Tcp_Stats {
+		public int goodbytes { get; set; }
+		public int lat_avg { get; set; }
+		public int lat_max { get; set; }
+		public int lat_min { get; set; }
+		public int lat_samples { get; set; }
+		public int lat_sum { get; set; }
+		public int retries { get; set; }
+		public int stalls { get; set; }
+	}
+
+	public class Wifi_Latency {
+		public int avg { get; set; }
+		public int max { get; set; }
+		public int min { get; set; }
+		public int total { get; set; }
+		public int total_count { get; set; }
+	}
+
+	public class Lldp_Table {
+		public string? chassis_descr { get; set; }
+		public string? chassis_id { get; set; }
+		public bool is_wired { get; set; }
+		public int local_port_idx { get; set; }
+		public string? local_port_name { get; set; }
+		public string? port_descr { get; set; }
+		public string? port_id { get; set; }
 	}
 
 	public class Radio_Table {
@@ -81,7 +269,7 @@ namespace TNBU.Core.Models.Inform {
 		public bool full_duplex { get; set; }
 		public bool is_uplink { get; set; }
 		public bool jumbo { get; set; }
-		public object[]? mac_table { get; set; }
+		public Mac_Table[]? mac_table { get; set; }
 		public string? media { get; set; }
 		public int poe_caps { get; set; }
 		public string? poe_class { get; set; }
@@ -112,6 +300,29 @@ namespace TNBU.Core.Models.Inform {
 		public int tx_multicast { get; set; }
 		public int tx_packets { get; set; }
 		public bool up { get; set; }
+		public string? sfp_compliance { get; set; }
+		public string? sfp_current { get; set; }
+		public bool sfp_found { get; set; }
+		public string? sfp_part { get; set; }
+		public string? sfp_rev { get; set; }
+		public bool sfp_rxfault { get; set; }
+		public string? sfp_rxpower { get; set; }
+		public string? sfp_serial { get; set; }
+		public string? sfp_temperature { get; set; }
+		public bool sfp_txfault { get; set; }
+		public string? sfp_txpower { get; set; }
+		public string? sfp_vendor { get; set; }
+		public string? sfp_voltage { get; set; }
+	}
+
+	public class Mac_Table {
+		public int age { get; set; }
+		public string? hostname { get; set; }
+		public string? ip { get; set; }
+		public string? mac { get; set; }
+		public bool @static { get; set; }
+		public int uptime { get; set; }
+		public int vlan { get; set; }
 	}
 
 	public class Athstats {

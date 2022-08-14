@@ -86,9 +86,9 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if (!device.IsAdopting && !device.ResetRequested)
+                                        @if (!device.IsAdopting && !device.IsResetting)
                                         {
-                                            <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
+                                            <button class="btn btn-danger" @onclick="() => device.IsResetting = true">
                                                 <Icon Name="trash" />
                                                 Forget
                                             </button>

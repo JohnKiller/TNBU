@@ -31,7 +31,7 @@ namespace TNBU.GUI.Models {
 				if(IsConfiguring) {
 					return "Configuring...";
 				}
-				if(ResetRequested) {
+				if(IsResetting) {
 					return "Resetting...";
 				}
 				return "Ready";
@@ -44,7 +44,7 @@ namespace TNBU.GUI.Models {
 		public string CfgVersion { get; set; } = "?";
 		public ManagementConfig? ManagementConfig { get; set; }
 
-		public bool ResetRequested { get; set; }
+		public bool IsResetting { get; set; }
 
 		public List<PhysicalRadio> PhysicalRadios { get; set; } = new();
 	}

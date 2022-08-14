@@ -118,7 +118,7 @@ namespace TNBU.GUI.Services {
 				logger.LogError("Wrong cfgversion {mac}", mac);
 				body = InformResponse.SetConfig(device.ManagementConfig, device.SystemConfig);
 				device.IsConfiguring = true;
-			} else if(device.ResetRequested) {
+			} else if(device.IsResetting) {
 				logger.LogError("Reset {mac}", mac);
 				body = InformResponse.Reset();
 				Devices.Remove(mac);

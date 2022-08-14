@@ -7,6 +7,7 @@ using TNBU.Core.Models.Inform;
 using TNBU.Core.Utils;
 using TNBU.GUI.Models;
 using TNBU.GUI.Services.ConfigurationBuilder;
+using TNBU.GUI.Services.FirmwareUpdate;
 
 namespace TNBU.GUI.Services {
 	public class DeviceManagerService {
@@ -15,6 +16,7 @@ namespace TNBU.GUI.Services {
 
 		private readonly ILogger<DiscoveryService> logger;
 		private readonly ConfigurationBuilderService configurationBuilder;
+		private readonly FirmwareManager fwManager = new();
 
 		public DeviceManagerService(ILogger<DiscoveryService> _logger, ConfigurationBuilderService _configurationBuilder) {
 			logger = _logger;
@@ -30,7 +32,7 @@ namespace TNBU.GUI.Services {
 				});
 			}
 			var device = Devices[mac];
-			device.IsConnected = true;
+			device.OnlinePing();
 			if(!dp.IsProbe) {
 				device.IsDefault = dp.IsDefault;
 				if(device.IsDefault) {
@@ -46,6 +48,7 @@ namespace TNBU.GUI.Services {
 			var fw = dp.FirmwareVersion;
 			if(fw != null) {
 				device.Firmware = fw;
+				fwManager.DeviceNeedsUpdate(device);
 			}
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);
 		}
@@ -64,7 +67,7 @@ namespace TNBU.GUI.Services {
 				});
 			}
 			var device = Devices[mac];
-			device.IsConnected = true;
+			device.OnlinePing();
 			device.IsAdopted = true; //TODO: check if serial already adopted (manual ssh set-inform)
 			device.IP = ip;
 
@@ -79,6 +82,7 @@ namespace TNBU.GUI.Services {
 			device.Model = request.model;
 			device.ModelDisplay = request.model_display;
 			device.Firmware = request.version;
+			fwManager.DeviceNeedsUpdate(device);
 
 			device.PhysicalRadios.Clear();
 			if(request.radio_table != null) {
@@ -109,10 +113,21 @@ namespace TNBU.GUI.Services {
 				inform_resp.IsGCM = false;
 				body = InformResponse.SetAdopt();
 				device.IsAdopting = true;
+			} else if(device.FirmwareUpdate != null) {
+				if(device.IsUpdating) {
+					logger.LogWarning("Got inform while updating from {mac}", mac);
+					body = InformResponse.Noop(30);
+				} else {
+					device.IsUpdating = true;
+					logger.LogWarning("Sending firmware update to {mac}", mac);
+					var fw = device.FirmwareUpdate;
+					body = InformResponse.Upgrade(fw.DeviceVersion, fw.MD5, fw.URL);
+				}
 			} else if(request.cfgversion == InformResponse.ADOPT_CFG) {
 				logger.LogWarning("Received adopt confirmation from {mac}", mac);
 				body = InformResponse.SetConfig(device.ManagementConfig, device.SystemConfig);
 				device.IsAdopting = false;
+				device.IsUpdating = false;
 				device.IsConfiguring = true;
 			} else if(request.cfgversion != device.CfgVersion) {
 				logger.LogError("Wrong cfgversion {mac}", mac);
@@ -128,6 +143,7 @@ namespace TNBU.GUI.Services {
 				body = InformResponse.Noop(interval);
 				device.IsAdopting = false;
 				device.IsConfiguring = false;
+				device.IsUpdating = false;
 			}
 
 			inform_resp.Body = JsonSerializer.Serialize(body);
@@ -159,6 +175,10 @@ namespace TNBU.GUI.Services {
 					throw;
 				}
 			});
+		}
+
+		public async Task CheckFirmwareUpdate() {
+			await fwManager.UpdateFirmwareCache();
 		}
 	}
 }

@@ -50,37 +50,39 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 				}
 			};
 			using var db = DBS.CreateDbContext();
-			var vDevs = new Dictionary<string, int>();
-			var isAth = !d.PhysicalRadios[0].Name.StartsWith("ra");
-			var athCounter = 0;
-			foreach(var phy in d.PhysicalRadios) {
-				var phyPrefix = phy.Name[..^1];
-				var phyCounter = 0;
-				var radio = new CfgRadioEntry {
-					PhyName = phy.Name,
-				};
-				foreach(var w in db.WiFiNetworks.OrderBy(x => x.ID)) {
-					var vdev = isAth ? $"ath{athCounter++}" : $"{phyPrefix}{phyCounter++}";
-					ret.Aaa.Entries.Add(new() {
-						SSID = w.SSID,
-						PSK = w.Password,
-						DevName = vdev,
-						BrDevName = br0.DevName,
-					});
-					radio.DevNames.Add(vdev);
-					ret.Wireless.Entries.Add(new() {
-						DevName = vdev,
+			if(d.PhysicalRadios.Count > 0) {
+				var vDevs = new Dictionary<string, int>();
+				var isAth = !d.PhysicalRadios[0].Name.StartsWith("ra");
+				var athCounter = 0;
+				foreach(var phy in d.PhysicalRadios) {
+					var phyPrefix = phy.Name[..^1];
+					var phyCounter = 0;
+					var radio = new CfgRadioEntry {
 						PhyName = phy.Name,
-						SSID = w.SSID,
-						//ID = "", ????
-					});
-					br0.Ports.Add(vdev);
-					ret.Netconf.Entries.Add(new() {
-						DevName = vdev,
-						Up = false,
-					});
+					};
+					foreach(var w in db.WiFiNetworks.OrderBy(x => x.ID)) {
+						var vdev = isAth ? $"ath{athCounter++}" : $"{phyPrefix}{phyCounter++}";
+						ret.Aaa.Entries.Add(new() {
+							SSID = w.SSID,
+							PSK = w.Password,
+							DevName = vdev,
+							BrDevName = br0.DevName,
+						});
+						radio.DevNames.Add(vdev);
+						ret.Wireless.Entries.Add(new() {
+							DevName = vdev,
+							PhyName = phy.Name,
+							SSID = w.SSID,
+							//ID = "", ????
+						});
+						br0.Ports.Add(vdev);
+						ret.Netconf.Entries.Add(new() {
+							DevName = vdev,
+							Up = false,
+						});
+					}
+					ret.Radio.Entries.Add(radio);
 				}
-				ret.Radio.Entries.Add(radio);
 			}
 			return ret;
 		}

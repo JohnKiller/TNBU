@@ -1,13 +1,18 @@
 @page "/configuration/devices"
 
 <PageLayout Title="Devices" SubTitle="Configuration">
+    <Actions>
+        <ActionButton Action="DeviceManager.CheckFirmwareUpdate" Icon="cpu">
+            Check for updates
+        </ActionButton>
+    </Actions>
     <PageBody>
         @if (DeviceManager.Devices.Any())
         {
             @if (DevicesToAdopt.Any())
             {
                 <div class="card mb-3">
-                    <div class="card-status-top bg-warning"></div>
+                    <div class="card-status-top bg-blue"></div>
                     <div class="card-header">
                         <h3 class="card-title me-auto">Discovered devices</h3>
                         <ActionButton Action="() => AdoptAll()">
@@ -34,10 +39,23 @@
                                     <td>@device.ModelDisplay</td>
                                     <td>@device.HostName</td>
                                     <td>@device.IP</td>
-                                    <td>@device.Firmware</td>
                                     <td>
-                                        <span class="status status-yellow">
-                                            <span class="status-dot status-dot-animated"></span>
+                                        @if (device.FirmwareUpdate != null)
+                                        {
+                                            <Icon Name="cpu" />
+                                        }
+                                        @device.Firmware
+                                    </td>
+                                    <td>
+                                        <span class="@($"status status-{device.StatusColor}")">
+                                            @if (device.IsWorking)
+                                            {
+                                                <span class="status-dot status-dot-animated"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-dot"></span>
+                                            }
                                             @device.Status
                                         </span>
                                     </td>
@@ -78,10 +96,23 @@
                                     <td>@device.ModelDisplay</td>
                                     <td>@device.HostName</td>
                                     <td>@device.IP</td>
-                                    <td>@device.Firmware</td>
                                     <td>
-                                        <span class="status status-yellow">
-                                            <span class="status-dot status-dot-animated"></span>
+                                        @if (device.FirmwareUpdate != null)
+                                        {
+                                            <Icon Name="cpu" />
+                                        }
+                                        @device.Firmware
+                                    </td>
+                                    <td>
+                                        <span class="@($"status status-{device.StatusColor}")">
+                                            @if (device.IsWorking)
+                                            {
+                                                <span class="status-dot status-dot-animated"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-dot"></span>
+                                            }
                                             @device.Status
                                         </span>
                                     </td>

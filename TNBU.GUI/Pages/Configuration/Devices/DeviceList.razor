@@ -5,47 +5,51 @@
         @if (DeviceManager.Devices.Any())
         {
             <div class="card">
-                <table class="table">
-                    <tr>
-                        <th>Serial</th>
-                        <th>Model</th>
-                        <th>Hostname</th>
-                        <th>IP</th>
-                        <th>Firmware</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    @foreach (var (serial, device) in DeviceManager.Devices)
-                    {
+                <table class="table table-vcenter card-table">
+                    <thead>
                         <tr>
-                            <td>@serial</td>
-                            <td>@device.ModelDisplay</td>
-                            <td>@device.HostName</td>
-                            <td>@device.IP</td>
-                            <td>@device.Firmware</td>
-                            <td>
-                                <span class="status status-yellow">
-                                    <span class="status-dot status-dot-animated"></span>
-                                    @device.Status
-                                </span>
-                            </td>
-                            <td>
-                                @if (device.IsAdoptable)
-                                {
-                                    <ActionButton Action="() => Adopt(device)">
-                                        Adopt
-                                    </ActionButton>
-                                }
-                                @if (device.IsAdopted && !device.IsAdopting && !device.ResetRequested)
-                                {
-                                    <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
-                                        <Icon Name="trash" />
-                                        Forget
-                                    </button>
-                                }
-                            </td>
+                            <th>Serial</th>
+                            <th>Model</th>
+                            <th>Hostname</th>
+                            <th>IP</th>
+                            <th>Firmware</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                    }
+                    </thead>
+                    <tbody>
+                        @foreach (var (serial, device) in DeviceManager.Devices)
+                        {
+                            <tr>
+                                <td>@serial</td>
+                                <td>@device.ModelDisplay</td>
+                                <td>@device.HostName</td>
+                                <td>@device.IP</td>
+                                <td>@device.Firmware</td>
+                                <td>
+                                    <span class="status status-yellow">
+                                        <span class="status-dot status-dot-animated"></span>
+                                        @device.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (device.IsAdoptable)
+                                    {
+                                        <ActionButton Action="() => Adopt(device)">
+                                            Adopt
+                                        </ActionButton>
+                                    }
+                                    @if (device.IsAdopted && !device.IsAdopting && !device.ResetRequested)
+                                    {
+                                        <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
+                                            <Icon Name="trash" />
+                                            Forget
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
                 </table>
             </div>
         }

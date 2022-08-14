@@ -4,54 +4,102 @@
     <PageBody>
         @if (DeviceManager.Devices.Any())
         {
-            <div class="card">
-                <table class="table table-vcenter card-table">
-                    <thead>
-                        <tr>
-                            <th>Serial</th>
-                            <th>Model</th>
-                            <th>Hostname</th>
-                            <th>IP</th>
-                            <th>Firmware</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var (serial, device) in DeviceManager.Devices)
-                        {
+            @if (DevicesToAdopt.Any())
+            {
+                <div class="card mb-3">
+                    <div class="card-status-top bg-warning"></div>
+                    <div class="card-header">
+                        <h3 class="card-title me-auto">Discovered devices</h3>
+                        <ActionButton Action="() => AdoptAll()">
+                            Adopt all
+                        </ActionButton>
+                    </div>
+                    <table class="table table-vcenter card-table">
+                        <thead>
                             <tr>
-                                <td>@serial</td>
-                                <td>@device.ModelDisplay</td>
-                                <td>@device.HostName</td>
-                                <td>@device.IP</td>
-                                <td>@device.Firmware</td>
-                                <td>
-                                    <span class="status status-yellow">
-                                        <span class="status-dot status-dot-animated"></span>
-                                        @device.Status
-                                    </span>
-                                </td>
-                                <td>
-                                    @if (device.IsAdoptable)
-                                    {
-                                        <ActionButton Action="() => Adopt(device)">
-                                            Adopt
-                                        </ActionButton>
-                                    }
-                                    @if (device.IsAdopted && !device.IsAdopting && !device.ResetRequested)
-                                    {
-                                        <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
-                                            <Icon Name="trash" />
-                                            Forget
-                                        </button>
-                                    }
-                                </td>
+                                <th>MAC</th>
+                                <th>Model</th>
+                                <th>Hostname</th>
+                                <th>IP</th>
+                                <th>Firmware</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach (var device in DevicesToAdopt)
+                            {
+                                <tr>
+                                    <td>@device.Mac</td>
+                                    <td>@device.ModelDisplay</td>
+                                    <td>@device.HostName</td>
+                                    <td>@device.IP</td>
+                                    <td>@device.Firmware</td>
+                                    <td>
+                                        <span class="status status-yellow">
+                                            <span class="status-dot status-dot-animated"></span>
+                                            @device.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (device.IsAdoptable)
+                                        {
+                                            <ActionButton Action="() => Adopt(device)">
+                                                Adopt
+                                            </ActionButton>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            @if (DevicesAdopted.Any())
+            {
+                <div class="card">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>MAC</th>
+                                <th>Model</th>
+                                <th>Hostname</th>
+                                <th>IP</th>
+                                <th>Firmware</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var device in DevicesAdopted)
+                            {
+                                <tr>
+                                    <td>@device.Mac</td>
+                                    <td>@device.ModelDisplay</td>
+                                    <td>@device.HostName</td>
+                                    <td>@device.IP</td>
+                                    <td>@device.Firmware</td>
+                                    <td>
+                                        <span class="status status-yellow">
+                                            <span class="status-dot status-dot-animated"></span>
+                                            @device.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (!device.IsAdopting && !device.ResetRequested)
+                                        {
+                                            <button class="btn btn-danger" @onclick="() => device.ResetRequested = true">
+                                                <Icon Name="trash" />
+                                                Forget
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         }
         else
         {

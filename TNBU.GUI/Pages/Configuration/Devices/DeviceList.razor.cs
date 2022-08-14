@@ -8,6 +8,9 @@ namespace TNBU.GUI.Pages.Configuration.Devices {
 		[Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
 		[Inject] public IToastService ToastService { get; set; } = null!;
 
+		public IEnumerable<Device> DevicesToAdopt => DeviceManager.Devices.Values.Where(x => !x.IsAdopted);
+		public IEnumerable<Device> DevicesAdopted => DeviceManager.Devices.Values.Where(x => x.IsAdopted);
+
 		protected override void OnInitialized() {
 			DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;
 		}
@@ -21,10 +24,16 @@ namespace TNBU.GUI.Pages.Configuration.Devices {
 			DeviceManager.OnDeviceChange -= DeviceManager_OnDeviceChange;
 		}
 
+		async Task AdoptAll() {
+			foreach(var d in DevicesToAdopt.Where(x => x.IsAdoptable)) {
+				await Adopt(d);
+			}
+		}
+
 		async Task Adopt(Device device) {
 			try {
 				await DeviceManager.Adopt(device);
-				ToastService.ShowSuccess("Adoption request sent!");
+				ToastService.ShowSuccess($"Adoption request sent to {device.ModelDisplay}!");
 			} catch(Exception ex) {
 				ToastService.ShowError(ex.Message);
 			}

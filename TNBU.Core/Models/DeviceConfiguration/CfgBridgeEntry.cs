@@ -1,7 +1,7 @@
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgBridgeEntry {
 		public string DevName { get; set; } = "br0";
-		public List<string> Ports { get; } = new() { "eth0" };
+		public List<string> Ports { get; } = new();
 
 		public string GetConfig(int num) {
 			return $@"

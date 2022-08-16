@@ -77,7 +77,9 @@ namespace TNBU.GUI.Services {
 				return null;
 			}
 
-			device.Inform = request;
+			if(!request.inform_as_notif) {
+				device.Inform = request;
+			}
 			device.IsDefault = request.@default;
 			device.HostName = request.hostname;
 			device.Model = request.model;
@@ -88,7 +90,7 @@ namespace TNBU.GUI.Services {
 			device.PhysicalRadios.Clear();
 			if(request.radio_table != null) {
 				foreach(var r in request.radio_table) {
-					device.PhysicalRadios.Add(new(r.name));
+					device.PhysicalRadios.Add(new(r.name, r.is_11ac));
 				}
 			}
 			device.PhysicalSwitchPorts.Clear();

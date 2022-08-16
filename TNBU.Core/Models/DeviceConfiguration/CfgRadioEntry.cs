@@ -1,7 +1,11 @@
+using System.Text;
+
 namespace TNBU.Core.Models.DeviceConfiguration {
 	public class CfgRadioEntry {
 		public string PhyName { get; set; } = "wifi0";
-		public List<string> DevNames { get; } = new() { "ath0" };
+		public string Mode { get; set; } = "master";
+		public string IEEEMode { get; set; } = "11nght20";
+		public List<string> DevNames { get; } = new();
 
 		public string GetConfig(int num) {
 			return $@"
@@ -20,8 +24,8 @@ radio.{num}.cwm.enable=0
 radio.{num}.cwm.mode=0
 radio.{num}.forbiasauto=0
 radio.{num}.hard_noisefloor.status=disabled
-radio.{num}.ieee_mode=11nght20
-radio.{num}.mode=master
+radio.{num}.ieee_mode={IEEEMode}
+radio.{num}.mode={Mode}
 radio.{num}.phyname={PhyName}
 radio.{num}.rate.auto=enabled
 radio.{num}.rate.mcs=auto

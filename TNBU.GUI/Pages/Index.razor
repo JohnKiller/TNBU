@@ -1,10 +1,24 @@
 @page "/"
+@using System.Net.NetworkInformation
 @using TNBU.GUI.Services
+@using static TNBU.GUI.Components.DeviceChain
 @implements IDisposable
 
 <PageLayout Title="Dashboard" SubTitle="Network overview">
     <PageBody>
         <div class="row row-cards">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Device chain
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <DeviceChain Devices="RootChain.Values.Where(x => x.IsRoot)" />
+                    </div>
+                </div>
+            </div>
             @foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
             {
                 <div class="col-3">
@@ -116,19 +130,70 @@
 @code {
     [Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
 
+    Dictionary<PhysicalAddress, DeviceChainModel> RootChain = new();
+
     protected override void OnInitialized()
     {
+        UpdateDeviceChain();
         DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;
     }
 
     private void DeviceManager_OnDeviceChange(object? sender, EventArgs e)
     {
-        InvokeAsync(() => StateHasChanged());
+        InvokeAsync(() =>
+        {
+            UpdateDeviceChain();
+            StateHasChanged();
+        });
     }
 
     public void Dispose()
     {
         GC.SuppressFinalize(this);
         DeviceManager.OnDeviceChange -= DeviceManager_OnDeviceChange;
+    }
+
+    public void UpdateDeviceChain()
+    {
+        var newChain = new Dictionary<PhysicalAddress, DeviceChainModel>();
+        foreach (var d in DeviceManager.Devices.Values)
+        {
+            newChain.Add(d.Mac, new(d.Mac, $"{d.ModelDisplay} {d.IP}"));
+        }
+        foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
+        {
+            var uplink_idx = 1;
+            if (d.Inform?.port_table != null)
+            {
+                var uplink_port = d.Inform.port_table.FirstOrDefault(x => x.is_uplink);
+                if (uplink_port == null)
+                {
+                    uplink_idx = -1;
+                }
+                else
+                {
+                    uplink_idx = uplink_port.port_idx;
+                }
+            }
+            if (d.Inform?.lldp_table != null)
+            {
+                var lldp = d.Inform.lldp_table.FirstOrDefault(x => x.local_port_idx == uplink_idx);
+                if (lldp != null)
+                {
+                    var uplink_mac = PhysicalAddress.Parse(lldp.chassis_id);
+                    if (!newChain.ContainsKey(uplink_mac))
+                    {
+                        newChain.Add(uplink_mac, new(uplink_mac, uplink_mac.ToString()));
+                    }
+                    newChain[d.Mac].Uplink = uplink_mac;
+                }
+            }
+        }
+        foreach(var d in newChain.Values){
+            if(d.Uplink != null){
+                newChain[d.Uplink].Childs.Add(d);
+            }
+        }
+        RootChain = newChain;
     }
 }

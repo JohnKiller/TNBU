@@ -1,0 +1,33 @@
+@using System.Net.NetworkInformation
+
+<ul>
+    @foreach (var d in Devices)
+    {
+        <li>
+            Name: <b>@d.Name</b>
+            @if (d.Childs.Any())
+            {
+                <DeviceChain Devices="d.Childs" />
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter, EditorRequired] public IEnumerable<DeviceChainModel> Devices { get; set; } = null!;
+
+    public class DeviceChainModel
+    {
+        public PhysicalAddress MAC { get; }
+        public string Name { get; }
+        public bool IsRoot => Uplink == null;
+        public List<DeviceChainModel> Childs { get; } = new();
+        public PhysicalAddress? Uplink { get; set; }
+
+        public DeviceChainModel(PhysicalAddress mac, string name)
+        {
+            MAC = mac;
+            Name = name;
+        }
+    }
+}

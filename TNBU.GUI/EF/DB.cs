@@ -20,7 +20,7 @@ namespace TNBU.GUI.EF {
 			//Database.EnsureCreated();
 			//Database.Migrate();
 
-			if(!WiFiNetworks.Any()) {
+			/*if(!WiFiNetworks.Any()) {
 				WiFiNetworks.Add(new WiFiNetwork {
 					SSID = "TNBU Test Network 1",
 					Password = "testnetwork1"
@@ -38,7 +38,7 @@ namespace TNBU.GUI.EF {
 					Password = "testnetwork4"
 				});
 				SaveChanges();
-			}
+			}*/
 		}
 	}
 

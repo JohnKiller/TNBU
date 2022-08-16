@@ -118,6 +118,46 @@
                                         </ul>
                                     </li>
                                 }
+                                @if (d.Inform?.radio_table != null)
+                                {
+                                    <li>
+                                        <b>Radio Table:</b>
+                                        <ul>
+                                            @foreach (var radio in d.Inform.radio_table)
+                                            {
+                                                <li>
+                                                    name: <b>@radio.name</b><br />
+                                                    @if (radio.scan_table != null && radio.scan_table.Length > 0)
+                                                    {
+                                                        <b>scan_table:</b>
+                                                        <ul>
+                                                            @foreach (var s in radio.scan_table)
+                                                            {
+                                                                <li>
+                                                                    essid: <b>@s.essid</b><br />
+                                                                    bssid: <b>@s.bssid</b><br />
+                                                                    @if (s.is_unifi || s.is_ubnt)
+                                                                    {
+                                                                        <span>
+                                                                            is_default: <b>@s.is_default</b><br />
+                                                                            is_isolated: <b>@s.is_isolated</b><br />
+                                                                            is_ubnt: <b>@s.is_ubnt</b><br />
+                                                                            is_unifi: <b>@s.is_unifi</b><br />
+                                                                            is_vport: <b>@s.is_vport</b><br />
+                                                                            is_vwire: <b>@s.is_vwire</b><br />
+                                                                            model: <b>@s.model</b><br />
+                                                                            model_display: <b>@s.model_display</b><br />
+                                                                        </span>
+                                                                    }
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </div>
@@ -158,26 +198,22 @@
         var newChain = new Dictionary<PhysicalAddress, DeviceChainModel>();
         foreach (var d in DeviceManager.Devices.Values)
         {
-            newChain.Add(d.Mac, new(d.Mac, $"{d.ModelDisplay} {d.IP}"));
+            newChain.Add(d.Mac, new(d.Mac, $"{d.Mac} {d.ModelDisplay} {d.IP}"));
         }
         foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
         {
-            var uplink_idx = 1;
+            var uplink_idx = -1;
             if (d.Inform?.port_table != null)
             {
                 var uplink_port = d.Inform.port_table.FirstOrDefault(x => x.is_uplink);
-                if (uplink_port == null)
-                {
-                    uplink_idx = -1;
-                }
-                else
+                if (uplink_port != null)
                 {
                     uplink_idx = uplink_port.port_idx;
                 }
             }
             if (d.Inform?.lldp_table != null)
             {
-                var lldp = d.Inform.lldp_table.FirstOrDefault(x => x.local_port_idx == uplink_idx);
+                var lldp = d.Inform.lldp_table.FirstOrDefault(x => x.local_port_idx == uplink_idx || x.local_port_name == d.Inform.uplink);
                 if (lldp != null)
                 {
                     var uplink_mac = PhysicalAddress.Parse(lldp.chassis_id);
@@ -189,8 +225,10 @@
                 }
             }
         }
-        foreach(var d in newChain.Values){
-            if(d.Uplink != null){
+        foreach (var d in newChain.Values)
+        {
+            if (d.Uplink != null)
+            {
                 newChain[d.Uplink].Childs.Add(d);
             }
         }

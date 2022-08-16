@@ -76,5 +76,22 @@ namespace TNBU.Core.Models.Inform {
 				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
 			};
 		}
+
+		public static dynamic HardReboot() {
+			return new {
+				_type = "reboot",
+				reboot_type = "hard",
+				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+			};
+		}
+
+		public static dynamic PortPowerCycle(int port) {
+			return new {
+				_type = "cmd",
+				cmd = "power-cycle",
+				port,
+				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+			};
+		}
 	}
 }

@@ -31,7 +31,7 @@ namespace TNBU.GUI.Services {
 					DiscoveryPacket decoded;
 					try {
 						decoded = DiscoveryPacket.Decode(pkt.Buffer);
-						logger.LogInformation("Got discovery packet from {ip}:\n{decoded}", pkt.RemoteEndPoint, decoded.ToString());
+						logger.LogInformation("Got discovery packet from {ip}", pkt.RemoteEndPoint);
 					} catch(Exception ex) {
 						logger.LogError("Failed decoding discovery packet from {ip}: {message}", pkt.RemoteEndPoint, ex.Message);
 						continue;

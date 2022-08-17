@@ -52,6 +52,7 @@ namespace TNBU.Core.Models.Inform {
 		public Radio_Table[]? radio_table { get; set; }
 		public Port_Table[]? port_table { get; set; }
 
+		public string? meshv3_peer_mac { get; set; }
 	}
 
 	public class Vap_Table {

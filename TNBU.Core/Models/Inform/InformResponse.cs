@@ -93,5 +93,22 @@ namespace TNBU.Core.Models.Inform {
 				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
 			};
 		}
+
+		public static dynamic MeshV3Connect(string mac) {
+			return new {
+				_type = "cmd",
+				cmd = "set-meshv3-payload",
+				mac,
+				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+			};
+		}
+
+		public static dynamic MeshV3Disconnect() {
+			return new {
+				_type = "cmd",
+				cmd = "unset-meshv3-payload",
+				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+			};
+		}
 	}
 }

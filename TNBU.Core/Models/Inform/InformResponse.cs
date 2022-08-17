@@ -1,6 +1,6 @@
 namespace TNBU.Core.Models.Inform {
 	public static class InformResponse {
-		public const string ADOPT_CFG = "ADOPT";
+		public const string ADOPT_CFG = "0123456789abcdef";
 		public static dynamic SetAdopt() {
 			return new {
 				_type = "setparam",

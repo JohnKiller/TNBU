@@ -19,9 +19,32 @@ namespace TNBU.GUI.Services {
 		private readonly ConfigurationBuilderService configurationBuilder;
 		private readonly FirmwareManager fwManager = new();
 
+		private readonly Thread bgThread;
+
+		private async void BackgroundThread() {
+			while(true) {
+				await Task.Delay(TimeSpan.FromSeconds(15));
+				foreach(var d in Devices.Where(x => !x.IsOnline && !x.IsAdopted && x.IsDefault).ToList()) {
+					lock(devices) {
+						devices.Remove(d.Mac);
+					}
+					OnDeviceChange?.Invoke(d, EventArgs.Empty);
+				}
+				foreach(var d in Devices.Where(x => !x.IsOnline && (x.Inform != null || x.IP != null))) {
+					d.Inform = null;
+					d.IP = null;
+					OnDeviceChange?.Invoke(d, EventArgs.Empty);
+				}
+			}
+		}
+
 		public DeviceManagerService(ILogger<DiscoveryService> _logger, ConfigurationBuilderService _configurationBuilder) {
 			logger = _logger;
 			configurationBuilder = _configurationBuilder;
+			bgThread = new(BackgroundThread) {
+				IsBackground = true
+			};
+			bgThread.Start();
 		}
 
 		public void GotDiscovery(DiscoveryPacket dp) {

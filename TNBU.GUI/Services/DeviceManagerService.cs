@@ -52,10 +52,10 @@ namespace TNBU.GUI.Services {
 			lock(devices) {
 				if(!devices.ContainsKey(mac)) {
 					devices.Add(mac, new() {
-					Mac = mac,
-					IsAdopted = false,
-				});
-			}
+						Mac = mac,
+						IsAdopted = false,
+					});
+				}
 			}
 			var device = devices[mac];
 			device.OnlinePing(false);
@@ -90,9 +90,9 @@ namespace TNBU.GUI.Services {
 			lock(devices) {
 				if(!devices.ContainsKey(mac)) {
 					devices.Add(mac, new() {
-					Mac = mac,
-				});
-			}
+						Mac = mac,
+					});
+				}
 			}
 			var device = devices[mac];
 			device.OnlinePing(true);
@@ -139,8 +139,8 @@ namespace TNBU.GUI.Services {
 									clientdev.Firmware = client.fw_version;
 									clientdev.Isolated = client.is_isolated;
 									clientdev.OnlinePing(false);
-				}
-			}
+								}
+							}
 						}
 					}
 				}
@@ -167,7 +167,7 @@ namespace TNBU.GUI.Services {
 
 			dynamic body;
 			if(request.inform_as_notif) {
-				logger.LogWarning("Received notif from {mac}: {message}", mac, request.notif_reason);
+				logger.LogWarning("Received notif from {mac}: {message} {payload}", mac, request.notif_reason, request.notif_payload);
 				body = InformResponse.Immediate();
 			} else if(request.cfgversion == "?") {
 				logger.LogWarning("Received adopt inform from {mac}", mac);

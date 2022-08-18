@@ -8,8 +8,8 @@ namespace TNBU.GUI.Pages.Configuration.Devices {
 		[Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
 		[Inject] public IToastService ToastService { get; set; } = null!;
 
-		public IEnumerable<Device> DevicesToAdopt => DeviceManager.Devices.Values.Where(x => !x.IsAdopted);
-		public IEnumerable<Device> DevicesAdopted => DeviceManager.Devices.Values.Where(x => x.IsAdopted);
+		public IEnumerable<Device> DevicesToAdopt => DeviceManager.Devices.Where(x => !x.IsAdopted);
+		public IEnumerable<Device> DevicesAdopted => DeviceManager.Devices.Where(x => x.IsAdopted);
 
 		protected override void OnInitialized() {
 			DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;

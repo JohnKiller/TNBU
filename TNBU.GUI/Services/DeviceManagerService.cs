@@ -11,7 +11,8 @@ using TNBU.GUI.Services.FirmwareUpdate;
 
 namespace TNBU.GUI.Services {
 	public class DeviceManagerService {
-		public Dictionary<PhysicalAddress, Device> Devices { get; } = new();
+		public IReadOnlyCollection<Device> Devices => devices.Values;
+		private readonly Dictionary<PhysicalAddress, Device> devices = new();
 		public event EventHandler? OnDeviceChange;
 
 		private readonly ILogger<DiscoveryService> logger;
@@ -25,14 +26,16 @@ namespace TNBU.GUI.Services {
 
 		public void GotDiscovery(DiscoveryPacket dp) {
 			var (mac, ip) = dp.GetPayloadAsMacIp(DiscoveryPacket.PAYLOAD_MACIP);
-			if(!Devices.ContainsKey(mac)) {
-				Devices.Add(mac, new() {
+			lock(devices) {
+				if(!devices.ContainsKey(mac)) {
+					devices.Add(mac, new() {
 					Mac = mac,
 					IsAdopted = false,
 				});
 			}
-			var device = Devices[mac];
-			device.OnlinePing();
+			}
+			var device = devices[mac];
+			device.OnlinePing(false);
 			if(!dp.IsProbe) {
 				device.IsDefault = dp.IsDefault;
 				if(device.IsDefault) {
@@ -61,13 +64,15 @@ namespace TNBU.GUI.Services {
 				return null;
 			}
 			var mac = req.MACAddress;
-			if(!Devices.ContainsKey(mac)) {
-				Devices.Add(mac, new() {
+			lock(devices) {
+				if(!devices.ContainsKey(mac)) {
+					devices.Add(mac, new() {
 					Mac = mac,
 				});
 			}
-			var device = Devices[mac];
-			device.OnlinePing();
+			}
+			var device = devices[mac];
+			device.OnlinePing(true);
 			device.IsAdopted = true; //TODO: check if serial already adopted (manual ssh set-inform)
 			device.IP = ip;
 
@@ -81,6 +86,7 @@ namespace TNBU.GUI.Services {
 				device.Inform = request;
 			}
 			device.IsDefault = request.@default;
+			device.Isolated = request.isolated;
 			device.HostName = request.hostname;
 			device.Model = request.model;
 			device.ModelDisplay = request.model_display;
@@ -145,7 +151,9 @@ namespace TNBU.GUI.Services {
 			} else if(device.IsResetting) {
 				logger.LogError("Reset {mac}", mac);
 				body = InformResponse.Reset();
-				Devices.Remove(mac);
+				lock(devices) {
+					devices.Remove(mac);
+				}
 			} else {
 				var interval = Math.Max(5, request.inform_min_interval);
 				logger.LogInformation("Noop {mac} interval {interval}", mac, interval);

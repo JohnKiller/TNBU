@@ -14,21 +14,23 @@ namespace TNBU.GUI.Models {
 		public string? Firmware { get; set; }
 		public FirmwareInfo? FirmwareUpdate { get; set; }
 		public DateTime LastPing { get; private set; } = DateTime.MinValue;
-		public bool IsOnline {
+		public DateTime LastInform { get; private set; } = DateTime.MinValue;
+		public bool IsOnline => (DateTime.UtcNow - LastPing).TotalSeconds < MaxOfflineTime;
+		public bool IsInformValid => (DateTime.UtcNow - LastInform).TotalSeconds < MaxOfflineTime;
+		private int MaxOfflineTime {
 			get {
-				int maxSec;
 				if(IsUpdating) {
-					maxSec = 300;
+					return 300;
 				} else if(IsWorking) {
-					maxSec = 120;
+					return 120;
 				} else if(IsAdopted) {
-					maxSec = 30;
-				} else{
-					maxSec = 60;
+					return 30;
+				} else {
+					return 60;
 				}
-				return (DateTime.UtcNow - LastPing).TotalSeconds < maxSec;
 			}
 		}
+		public bool Isolated { get; set; }
 		public bool IsDefault { get; set; }
 		public bool IsAdopted { get; set; }
 		public bool IsAdoptable => IsOnline && IsDefault && !IsAdopted;
@@ -56,6 +58,9 @@ namespace TNBU.GUI.Models {
 				if(IsResetting) {
 					return "Resetting...";
 				}
+				if(Isolated) {
+					return "Isolated";
+				}
 				if(FirmwareUpdate != null) {
 					return "Update available";
 				}
@@ -76,7 +81,7 @@ namespace TNBU.GUI.Models {
 				if(IsResetting) {
 					return "red";
 				}
-				if(IsAdopting || IsConfiguring) {
+				if(IsWorking) {
 					return "yellow";
 				}
 				if(FirmwareUpdate != null || IsUpdating) {
@@ -100,8 +105,11 @@ namespace TNBU.GUI.Models {
 
 		public BaseInformBody? Inform { get; set; }
 
-		public void OnlinePing() {
+		public void OnlinePing(bool isInform) {
 			LastPing = DateTime.UtcNow;
+			if(isInform) {
+				LastInform = DateTime.UtcNow;
+			}
 		}
 	}
 }

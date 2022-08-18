@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            @foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
+            @foreach (var d in DeviceManager.Devices.Where(x => x.Inform != null))
             {
                 <div class="col-3">
                     <div class="card">
@@ -31,8 +31,8 @@
                         </div>
                         <div class="card-body">
                             <ul>
-                                <li>Uplink: <b>@d.Inform.uplink</b></li>
-                                @if (d.Inform.lldp_table != null && d.Inform.lldp_table.Length > 0)
+                                <li>Uplink: <b>@d.Inform?.uplink</b></li>
+                                @if (d.Inform!.lldp_table != null && d.Inform.lldp_table.Length > 0)
                                 {
                                     <li>
                                         <b>LLDP:</b>
@@ -52,7 +52,7 @@
                                         </ul>
                                     </li>
                                 }
-                                @if (d.Inform.port_table != null)
+                                @if (d.Inform!.port_table != null)
                                 {
                                     <li>
                                         <b>Port Table:</b>
@@ -118,7 +118,7 @@
                                         </ul>
                                     </li>
                                 }
-                                @if (d.Inform?.radio_table != null)
+                                @if (d.Inform!.radio_table != null)
                                 {
                                     <li>
                                         <b>Radio Table:</b>
@@ -196,11 +196,11 @@
     public void UpdateDeviceChain()
     {
         var newChain = new Dictionary<PhysicalAddress, DeviceChainModel>();
-        foreach (var d in DeviceManager.Devices.Values)
+        foreach (var d in DeviceManager.Devices)
         {
             newChain.Add(d.Mac, new(d.Mac, $"{d.Mac} {d.ModelDisplay} {d.IP}"));
         }
-        foreach (var d in DeviceManager.Devices.Values.Where(x => x.Inform != null))
+        foreach (var d in DeviceManager.Devices.Where(x => x.Inform != null))
         {
             var uplink_idx = -1;
             if (d.Inform?.port_table != null)

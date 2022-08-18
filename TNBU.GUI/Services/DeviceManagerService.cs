@@ -120,6 +120,29 @@ namespace TNBU.GUI.Services {
 			if(request.radio_table != null) {
 				foreach(var r in request.radio_table) {
 					device.PhysicalRadios.Add(new(r.name, r.is_11ac));
+					if(r.scan_table != null) {
+						foreach(var client in r.scan_table) {
+							if(client.is_vport) {
+								var clientmac = PhysicalAddress.Parse(client.serialno);
+								lock(devices) {
+									if(!devices.ContainsKey(clientmac)) {
+										devices.Add(clientmac, new() {
+											Mac = clientmac,
+										});
+									}
+								}
+								var clientdev = devices[clientmac];
+								if(!clientdev.IsInformValid) {
+									clientdev.IsDefault = client.is_default;
+									clientdev.Model = client.model;
+									clientdev.ModelDisplay = client.model_display;
+									clientdev.Firmware = client.fw_version;
+									clientdev.Isolated = client.is_isolated;
+									clientdev.OnlinePing(false);
+				}
+			}
+						}
+					}
 				}
 			}
 			device.PhysicalSwitchPorts.Clear();

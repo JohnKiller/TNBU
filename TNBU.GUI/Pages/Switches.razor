@@ -1,0 +1,118 @@
+@page "/switches"
+@using TNBU.GUI.Services
+@implements IDisposable
+
+<PageLayout Title="Switches" SubTitle="Switches overview">
+    <PageBody>
+        <div class="row row-cards">
+            @foreach (var d in DeviceManager.Devices.Where(x => x.Inform?.port_table != null && x.Inform.port_table.Length > 2))
+            {
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                @d.ModelDisplay
+                                <span class="card-subtitle">@d.Mac @d.IP</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row overflow-auto">
+                                @for (var oddeven = 0; oddeven < 2; oddeven++)
+                                {
+                                    <div class="col-12 text-nowrap mb-2">
+                                        @foreach (var p in d.Inform!.port_table!.Where((_, i) => i % 2 == oddeven))
+                                        {
+                                            <div class="me-2 d-inline-flex flex-column">
+                                                @if (oddeven == 0)
+                                                {
+                                                    <div class="text-center">@p.port_idx</div>
+                                                }
+                                                @{
+                                                    var pclass = "avatar avatar-sm border-top-wide text-white";
+                                                    if (p.lag_member)
+                                                    {
+                                                        pclass += " border-blue";
+                                                    }
+                                                    var oclass = "badge";
+                                                    if (p.up)
+                                                    {
+                                                        if (p.stp_state == "discarding")
+                                                        {
+                                                            pclass += " bg-red-lt";
+                                                        }
+                                                        else
+                                                        {
+                                                            pclass += " bg-green-lt";
+                                                        }
+                                                        oclass += " bg-green";
+                                                    }
+                                                    else
+                                                    {
+                                                        pclass += " bg-muted-lt";
+                                                        oclass += " bg-muted-lt";
+                                                    }
+                                                    var poeclass = "badge start-0";
+                                                    if (p.poe_enable)
+                                                    {
+                                                        poeclass += " bg-orange";
+                                                    }
+                                                    else
+                                                    {
+                                                        poeclass += " bg-muted-lt";
+                                                    }
+                                                }
+                                                <div class="@pclass">
+                                                    @if (p.stp_state == "discarding")
+                                                    {
+                                                        <Icon Name="forbid" />
+                                                    }
+                                                    else if (p.is_uplink)
+                                                    {
+                                                        <Icon Name="chevron-up" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <Icon Name="empty" />
+                                                    }
+                                                    <span class="@oclass"></span>
+                                                    @if (p.port_poe)
+                                                    {
+                                                        <span class="@poeclass"></span>
+                                                    }
+                                                </div>
+                                                @if (oddeven == 1)
+                                                {
+                                                    <div class="text-center">@p.port_idx</div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </PageBody>
+</PageLayout>
+
+@code {
+    [Inject] public DeviceManagerService DeviceManager { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        DeviceManager.OnDeviceChange += DeviceManager_OnDeviceChange;
+    }
+
+    private void DeviceManager_OnDeviceChange(object? sender, EventArgs e)
+    {
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        DeviceManager.OnDeviceChange -= DeviceManager_OnDeviceChange;
+    }
+}

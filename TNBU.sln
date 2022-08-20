@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNBU.MitM", "TNBU.MitM\TNBU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNBU.GUI", "TNBU.GUI\TNBU.GUI.csproj", "{A497E735-C752-4F3E-A968-784163D37274}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNBU.Simulator", "TNBU.Simulator\TNBU.Simulator.csproj", "{E0F40720-A932-44CF-AEEB-001FEFADB751}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNBU.Simulator", "TNBU.Simulator\TNBU.Simulator.csproj", "{E0F40720-A932-44CF-AEEB-001FEFADB751}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

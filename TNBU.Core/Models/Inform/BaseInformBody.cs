@@ -19,6 +19,7 @@ namespace TNBU.Core.Models.Inform {
 		public bool isolated { get; set; }
 		public bool locating { get; set; }
 		public string? uplink { get; set; }
+		public string? root_switch { get; set; }
 
 		public string? anon_id { get; set; }
 		public string? hash_id { get; set; }
@@ -45,7 +46,9 @@ namespace TNBU.Core.Models.Inform {
 		public int time { get; set; }
 		public int uptime { get; set; }
 		public string? version { get; set; }
+	}
 
+	public class ExtendedInformBody : BaseInformBody {
 		public Lldp_Table[]? lldp_table { get; set; }
 		public Vap_Table[]? vap_table { get; set; }
 
@@ -269,6 +272,10 @@ namespace TNBU.Core.Models.Inform {
 		public bool flowctrl_tx { get; set; }
 		public bool full_duplex { get; set; }
 		public bool is_uplink { get; set; }
+		public bool lag_member { get; set; }
+		public int aggregate_num_ports { get; set; }
+		public Lacp_State[]? lacp_state { get; set; }
+		public string? partner_system_id { get; set; }
 		public bool jumbo { get; set; }
 		public Mac_Table[]? mac_table { get; set; }
 		public string? media { get; set; }
@@ -386,6 +393,12 @@ namespace TNBU.Core.Models.Inform {
 		public string? model { get; set; }
 		public string? model_display { get; set; }
 		public string? serialno { get; set; }
+	}
+
+	public class Lacp_State {
+		public bool active { get; set; }
+		public int member_port { get; set; }
+		public int speed { get; set; }
 	}
 }
 #pragma warning restore IDE1006

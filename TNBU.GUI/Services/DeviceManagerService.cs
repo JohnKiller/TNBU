@@ -104,10 +104,6 @@ namespace TNBU.GUI.Services {
 				logger.LogError("Failed deserializing inform payload body to json");
 				return null;
 			}
-
-			if(!request.inform_as_notif) {
-				device.Inform = request;
-			}
 			device.IsDefault = request.@default;
 			device.Isolated = request.isolated;
 			device.HostName = request.hostname;
@@ -116,39 +112,53 @@ namespace TNBU.GUI.Services {
 			device.Firmware = request.version;
 			fwManager.DeviceNeedsUpdate(device);
 
-			device.PhysicalRadios.Clear();
-			if(request.radio_table != null) {
-				foreach(var r in request.radio_table) {
-					device.PhysicalRadios.Add(new(r.name, r.is_11ac));
-					if(r.scan_table != null) {
-						foreach(var client in r.scan_table) {
-							if(client.is_vport) {
-								var clientmac = PhysicalAddress.Parse(client.serialno);
-								lock(devices) {
-									if(!devices.ContainsKey(clientmac)) {
-										devices.Add(clientmac, new() {
-											Mac = clientmac,
-										});
+			ExtendedInformBody? extendedInformBody = null;
+			try {
+				extendedInformBody = JsonSerializer.Deserialize<ExtendedInformBody>(req.Body);
+			} catch(Exception) {
+				logger.LogError("Failed deserializing inform payload body to json");
+				if(device.FirmwareUpdate == null) {
+					throw;
+				}
+			}
+			if(extendedInformBody != null) {
+				if(!request.inform_as_notif) {
+					device.Inform = extendedInformBody;
+				}
+				device.PhysicalRadios.Clear();
+				if(extendedInformBody.radio_table != null) {
+					foreach(var r in extendedInformBody.radio_table) {
+						device.PhysicalRadios.Add(new(r.name, r.is_11ac));
+						if(r.scan_table != null) {
+							foreach(var client in r.scan_table) {
+								if(client.is_vport) {
+									var clientmac = PhysicalAddress.Parse(client.serialno);
+									lock(devices) {
+										if(!devices.ContainsKey(clientmac)) {
+											devices.Add(clientmac, new() {
+												Mac = clientmac,
+											});
+										}
 									}
-								}
-								var clientdev = devices[clientmac];
-								if(!clientdev.IsInformValid) {
-									clientdev.IsDefault = client.is_default;
-									clientdev.Model = client.model;
-									clientdev.ModelDisplay = client.model_display;
-									clientdev.Firmware = client.fw_version;
-									clientdev.Isolated = client.is_isolated;
-									clientdev.OnlinePing(false);
+									var clientdev = devices[clientmac];
+									if(!clientdev.IsInformValid) {
+										clientdev.IsDefault = client.is_default;
+										clientdev.Model = client.model;
+										clientdev.ModelDisplay = client.model_display;
+										clientdev.Firmware = client.fw_version;
+										clientdev.Isolated = client.is_isolated;
+										clientdev.OnlinePing(false);
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			device.PhysicalSwitchPorts.Clear();
-			if(request.port_table != null) {
-				foreach(var p in request.port_table) {
-					device.PhysicalSwitchPorts.Add(new(p.port_idx));
+				device.PhysicalSwitchPorts.Clear();
+				if(extendedInformBody.port_table != null) {
+					foreach(var p in extendedInformBody.port_table) {
+						device.PhysicalSwitchPorts.Add(new(p.port_idx));
+					}
 				}
 			}
 

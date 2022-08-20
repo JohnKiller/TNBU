@@ -103,7 +103,7 @@ namespace TNBU.GUI.Models {
 		public List<PhysicalRadio> PhysicalRadios { get; set; } = new();
 		public List<PhysicalSwitchPort> PhysicalSwitchPorts { get; set; } = new();
 
-		public BaseInformBody? Inform { get; set; }
+		public ExtendedInformBody? Inform { get; set; }
 
 		public void OnlinePing(bool isInform) {
 			LastPing = DateTime.UtcNow;

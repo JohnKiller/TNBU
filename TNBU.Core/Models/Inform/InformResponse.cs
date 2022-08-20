@@ -37,6 +37,15 @@ namespace TNBU.Core.Models.Inform {
 			};
 		}
 
+		public static dynamic LiveUpdate(int delay) {
+			return new {
+				_type = "noop",
+				interval = delay,
+				live_update = true,
+				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+			};
+		}
+
 		public static dynamic Reset() {
 			return new {
 				_type = "setdefault",

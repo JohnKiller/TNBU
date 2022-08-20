@@ -57,6 +57,10 @@
                                                 <span class="status-dot"></span>
                                             }
                                             @device.Status
+                                            @if (device.IsWorking)
+                                            {
+                                                <span class="animated-dots"></span>
+                                            }
                                         </span>
                                     </td>
                                     <td>
@@ -114,6 +118,10 @@
                                                 <span class="status-dot"></span>
                                             }
                                             @device.Status
+                                            @if (device.IsWorking)
+                                            {
+                                                <span class="animated-dots"></span>
+                                            }
                                         </span>
                                     </td>
                                     <td>

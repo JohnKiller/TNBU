@@ -41,7 +41,7 @@ namespace TNBU.GUI.Models {
 					return "Offline";
 				}
 				if(IsUpdating) {
-					return "Updating firmware...";
+					return "Updating firmware";
 				}
 				if(!IsAdopted) {
 					if(IsDefault) {
@@ -50,13 +50,13 @@ namespace TNBU.GUI.Models {
 					return "Managed by another console";
 				}
 				if(IsAdopting) {
-					return "Adopting...";
+					return "Adopting";
 				}
 				if(IsConfiguring) {
-					return "Configuring...";
+					return "Configuring";
 				}
 				if(IsResetting) {
-					return "Resetting...";
+					return "Resetting";
 				}
 				if(Isolated) {
 					return "Isolated";

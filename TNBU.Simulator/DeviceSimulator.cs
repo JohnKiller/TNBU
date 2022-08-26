@@ -94,6 +94,7 @@ namespace TNBU.Simulator {
 				var inform_resp = InformPacket.Decode(rawstream);
 				inform_resp.Decrypt(authkey);
 				var respbody = System.Text.Json.JsonSerializer.Deserialize<BodyResp>(inform_resp.Body)!;
+				Console.WriteLine($"Got {respbody._type}");
 				switch(respbody._type) {
 					case "noop":
 						//Console.WriteLine("Got noop");
@@ -120,6 +121,13 @@ namespace TNBU.Simulator {
 						if(respbody.system_cfg != null) {
 							File.WriteAllText($"system_cfg_{body.model}.txt", respbody.system_cfg);
 						}
+						break;
+					case "upgrade":
+						body.version = respbody.version;
+						break;
+					case "setdefault":
+						File.Delete(authkey);
+						authkey = InformPacket.DEFAULT_KEY;
 						break;
 					default:
 						throw new Exception();

@@ -182,7 +182,7 @@ namespace TNBU.GUI.Services {
 			} else if(request.cfgversion == "?") {
 				logger.LogWarning("Received adopt inform from {mac}", mac);
 				inform_resp.IsGCM = false;
-				body = InformResponse.SetAdopt();
+				body = InformResponse.SetAdopt(InformPacket.DEFAULT_KEY);
 				device.IsAdopting = true;
 			} else if(device.FirmwareUpdate != null) {
 				if(device.IsUpdating) {

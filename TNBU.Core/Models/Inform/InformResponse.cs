@@ -1,11 +1,12 @@
 namespace TNBU.Core.Models.Inform {
 	public static class InformResponse {
 		public const string ADOPT_CFG = "0123456789abcdef";
-		public static dynamic SetAdopt() {
+		public static dynamic SetAdopt(string authKey) {
 			return new {
 				_type = "setparam",
 				mgmt_cfg = new ManagementConfig {
-					CfgVersion = ADOPT_CFG
+					CfgVersion = ADOPT_CFG,
+					AuthKey = authKey,
 				}.ToString(),
 				server_time_in_utc = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
 			};

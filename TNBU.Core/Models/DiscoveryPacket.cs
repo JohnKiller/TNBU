@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -32,6 +33,7 @@ public class DiscoveryPacket {
 	public byte Version { get; set; }
 	public byte DiscoveryType { get; set; }
 	public Dictionary<byte, byte[]> Payloads { get; } = new();
+	public Dictionary<byte, List<byte[]>> PayloadsMulti { get; } = new();
 
 	public PhysicalAddress Mac => GetPayloadAsMacIp(PAYLOAD_MACIP).Mac;
 	public IPAddress IP => GetPayloadAsMacIp(PAYLOAD_MACIP).IP;
@@ -69,13 +71,17 @@ public class DiscoveryPacket {
 		var index = 4;
 		while(index < data.Length) {
 			var key = data[index];
-			if(ret.Payloads.ContainsKey(key)) {
-				throw new Exception("Duplicate key");
-			}
 			var length = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(index + 1, 2));
 			var start = index + 3;
 			var end = start + length;
-			ret.Payloads[key] = data[start..end];
+			var pdata = data[start..end];
+			if(!ret.Payloads.ContainsKey(key)) {
+				ret.Payloads[key] = pdata;
+			}
+			if(!ret.PayloadsMulti.ContainsKey(key)) {
+				ret.PayloadsMulti[key] = new();
+			}
+			ret.PayloadsMulti[key].Add(pdata);
 			index += length + 3;
 		}
 		return ret;

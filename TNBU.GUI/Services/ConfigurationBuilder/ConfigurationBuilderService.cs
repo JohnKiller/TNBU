@@ -37,10 +37,28 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 				}
 			};
 			if(d.PhysicalSwitchPorts.Count > 2) {
+				ret.Switch.StpPriority = d.Mac.ToString() switch {
+					"D021F9B8E0E4" => 4096 * 2,
+					"D021F9E29E55" => 4096 * 3,
+					"D021F9BD72BB" => 4096 * 4,
+					_ => 32768
+				};
 				foreach(var port in d.PhysicalSwitchPorts) {
-					ret.Switch.Entries.Add(new() {
-
-					});
+					var p = new CfgSwitchEntry() {
+						LAG = port.ID switch {
+							49 => 1,
+							51 => 1,
+							50 => 2,
+							52 => 2,
+							15 => 3,
+							16 => 3,
+							_ => null
+						},
+						//Enabled = port.ID != 15 && port.ID != 16 && port.ID != 49 && port.ID != 50,
+						//Enabled = port.ID < 10,
+						//StpEnabled = port.ID > 2,
+					};
+					ret.Switch.Entries.Add(p);
 				}
 			}
 			using var db = DBS.CreateDbContext();

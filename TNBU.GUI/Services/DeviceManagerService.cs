@@ -1,6 +1,7 @@
 using Renci.SshNet;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
 using System.Text.Json;
 using TNBU.Core.Models;
 using TNBU.Core.Models.Inform;
@@ -11,6 +12,9 @@ using TNBU.GUI.Services.FirmwareUpdate;
 
 namespace TNBU.GUI.Services {
 	public class DeviceManagerService {
+		private const string MASTER_KEY_PATH = "masterkey.txt";
+		private readonly byte[] MASTER_KEY;
+
 		public IReadOnlyCollection<Device> Devices => devices.Values;
 		private readonly Dictionary<PhysicalAddress, Device> devices = new();
 		public event EventHandler? OnDeviceChange;
@@ -38,9 +42,24 @@ namespace TNBU.GUI.Services {
 			}
 		}
 
+		private string GetKey(PhysicalAddress mac) {
+			using var hmac = new HMACMD5(MASTER_KEY);
+			var bhmac = hmac.ComputeHash(mac.GetAddressBytes());
+			return Convert.ToHexString(bhmac).ToLower();
+		}
+
 		public DeviceManagerService(ILogger<DiscoveryService> _logger, ConfigurationBuilderService _configurationBuilder) {
 			logger = _logger;
 			configurationBuilder = _configurationBuilder;
+
+			if(File.Exists(MASTER_KEY_PATH)) {
+				MASTER_KEY = Convert.FromHexString(File.ReadAllText(MASTER_KEY_PATH));
+			} else {
+				MASTER_KEY = RandomNumberGenerator.GetBytes(32);
+				File.WriteAllText(MASTER_KEY_PATH, Convert.ToHexString(MASTER_KEY));
+				logger.LogWarning("Generated new master key!");
+			}
+
 			bgThread = new(BackgroundThread) {
 				IsBackground = true
 			};
@@ -51,8 +70,7 @@ namespace TNBU.GUI.Services {
 			var (mac, ip) = dp.GetPayloadAsMacIp(DiscoveryPacket.PAYLOAD_MACIP);
 			lock(devices) {
 				if(!devices.ContainsKey(mac)) {
-					devices.Add(mac, new() {
-						Mac = mac,
+					devices.Add(mac, new(GetKey(mac), mac) {
 						IsAdopted = false,
 					});
 				}
@@ -80,17 +98,29 @@ namespace TNBU.GUI.Services {
 		}
 
 		public async Task<byte[]?> GotInform(InformPacket req, IPAddress ip) {
-			try {
-				req.Decrypt();
-			} catch(Exception ex) {
-				logger.LogError("Error decoding inform packet: {message}", ex.Message);
-				return null;
-			}
 			var mac = req.MACAddress;
+			var deviceKey = InformPacket.DEFAULT_KEY;
 			lock(devices) {
+				try {
+					if(devices.ContainsKey(mac)) {
+						deviceKey = devices[mac].Key;
+					} else {
+						deviceKey = GetKey(mac);
+					}
+					try {
+						req.Decrypt(deviceKey);
+					} catch(Exception) {
+						logger.LogWarning("Error decoding inform packet from known device: {mac}", mac);
+						deviceKey = InformPacket.DEFAULT_KEY;
+						req.Decrypt(); //retry with default key
+					}
+				} catch(Exception ex) {
+					logger.LogError("Error decoding inform packet: {message}", ex.Message);
+					return null;
+				}
 				if(!devices.ContainsKey(mac)) {
-					devices.Add(mac, new() {
-						Mac = mac,
+					devices.Add(mac, new(GetKey(mac), mac) {
+
 					});
 				}
 			}
@@ -135,8 +165,8 @@ namespace TNBU.GUI.Services {
 									var clientmac = PhysicalAddress.Parse(client.serialno);
 									lock(devices) {
 										if(!devices.ContainsKey(clientmac)) {
-											devices.Add(clientmac, new() {
-												Mac = clientmac,
+											devices.Add(clientmac, new(GetKey(clientmac), clientmac) {
+
 											});
 										}
 									}
@@ -179,10 +209,10 @@ namespace TNBU.GUI.Services {
 			if(request.inform_as_notif) {
 				logger.LogWarning("Received notif from {mac}: {message} {payload}", mac, request.notif_reason, request.notif_payload);
 				body = InformResponse.Immediate();
-			} else if(request.cfgversion == "?") {
+			} else if(request.cfgversion == "?" || deviceKey != device.Key) {
 				logger.LogWarning("Received adopt inform from {mac}", mac);
 				inform_resp.IsGCM = false;
-				body = InformResponse.SetAdopt(InformPacket.DEFAULT_KEY);
+				body = InformResponse.SetAdopt(device.Key);
 				device.IsAdopting = true;
 			} else if(device.FirmwareUpdate != null) {
 				if(device.IsUpdating) {
@@ -222,7 +252,7 @@ namespace TNBU.GUI.Services {
 			inform_resp.Body = JsonSerializer.Serialize(body);
 
 			OnDeviceChange?.Invoke(device, EventArgs.Empty);
-			return inform_resp.Encode();
+			return inform_resp.Encode(deviceKey);
 		}
 
 		public async Task Adopt(Device device) {
@@ -232,7 +262,7 @@ namespace TNBU.GUI.Services {
 			}
 			logger.LogInformation("Starting adoption task");
 			var (ourIp, _) = NetworkUtils.GetMyIPOnThisSubnet(device.IP);
-			var newcmd = $"/usr/bin/syswrapper.sh set-adopt http://{ourIp}:8081/inform {InformPacket.DEFAULT_KEY}";
+			var newcmd = $"/usr/bin/syswrapper.sh set-adopt http://{ourIp}:8081/inform {device.Key}";
 			await Task.Run(() => {
 				try {
 					using var client = new SshClient(device.IP.ToString(), "ubnt", "ubnt");

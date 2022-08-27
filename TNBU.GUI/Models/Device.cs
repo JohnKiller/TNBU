@@ -6,7 +6,14 @@ using TNBU.GUI.Services.FirmwareUpdate;
 
 namespace TNBU.GUI.Models {
 	public class Device {
-		public PhysicalAddress Mac { get; set; } = null!;
+		public string Key { get; }
+		public PhysicalAddress Mac { get; }
+
+		public Device(string key, PhysicalAddress mac) {
+			Key = key;
+			Mac = mac;
+		}
+
 		public string? Model { get; set; }
 		public string? ModelDisplay { get; set; }
 		public IPAddress? IP { get; set; }

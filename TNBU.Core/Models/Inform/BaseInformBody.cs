@@ -42,7 +42,7 @@ namespace TNBU.Core.Models.Inform {
 		public bool selfrun_beacon { get; set; }
 		public string? serial { get; set; }
 		public int state { get; set; }
-		public int sys_error_caps { get; set; }
+		public long sys_error_caps { get; set; }
 		public int time { get; set; }
 		public int uptime { get; set; }
 		public string? version { get; set; }
@@ -79,35 +79,35 @@ namespace TNBU.Core.Models.Inform {
 		public string? radio_name { get; set; }
 		public Reasons_Bar_Chart? reasons_bar_chart { get; set; }
 		public Reasons_Bar_Chart? reasons_bar_chart_now { get; set; }
-		public int rx_bytes { get; set; }
-		public int rx_crypts { get; set; }
-		public int rx_dropped { get; set; }
-		public int rx_errors { get; set; }
-		public int rx_frags { get; set; }
-		public int rx_nwids { get; set; }
-		public int rx_packets { get; set; }
+		public long rx_bytes { get; set; }
+		public long rx_crypts { get; set; }
+		public long rx_dropped { get; set; }
+		public long rx_errors { get; set; }
+		public long rx_frags { get; set; }
+		public long rx_nwids { get; set; }
+		public long rx_packets { get; set; }
 		public Tcp_Stats? rx_tcp_stats { get; set; }
 		public int satisfaction { get; set; }
 		public int satisfaction_now { get; set; }
 		public int satisfaction_real { get; set; }
 		public Sta_Table[]? sta_table { get; set; }
 		public string? state { get; set; }
-		public int tx_bytes { get; set; }
-		public int tx_combined_retries { get; set; }
-		public int tx_data_mpdu_bytes { get; set; }
-		public int tx_dropped { get; set; }
-		public int tx_errors { get; set; }
-		public int tx_packets { get; set; }
-		public int tx_power { get; set; }
-		public int tx_retries { get; set; }
-		public int tx_rts_retries { get; set; }
-		public int tx_success { get; set; }
+		public long tx_bytes { get; set; }
+		public long tx_combined_retries { get; set; }
+		public long tx_data_mpdu_bytes { get; set; }
+		public long tx_dropped { get; set; }
+		public long tx_errors { get; set; }
+		public long tx_packets { get; set; }
+		public long tx_power { get; set; }
+		public long tx_retries { get; set; }
+		public long tx_rts_retries { get; set; }
+		public long tx_success { get; set; }
 		public Tcp_Stats? tx_tcp_stats { get; set; }
-		public int tx_total { get; set; }
+		public long tx_total { get; set; }
 		public bool up { get; set; }
 		public string? usage { get; set; }
-		public int wifi_tx_attempts { get; set; }
-		public int wifi_tx_dropped { get; set; }
+		public long wifi_tx_attempts { get; set; }
+		public long wifi_tx_dropped { get; set; }
 		public Wifi_Latency? wifi_tx_latency_mov { get; set; }
 	}
 
@@ -167,13 +167,13 @@ namespace TNBU.Core.Models.Inform {
 		public int noise { get; set; }
 		public int nss { get; set; }
 		public int rssi { get; set; }
-		public int rx_bytes { get; set; }
-		public int rx_bytes_mov { get; set; }
-		public int rx_mcast { get; set; }
-		public int rx_packets { get; set; }
-		public int rx_rate { get; set; }
-		public int rx_rate_mov { get; set; }
-		public int rx_retries { get; set; }
+		public long rx_bytes { get; set; }
+		public long rx_bytes_mov { get; set; }
+		public long rx_mcast { get; set; }
+		public long rx_packets { get; set; }
+		public long rx_rate { get; set; }
+		public long rx_rate_mov { get; set; }
+		public long rx_retries { get; set; }
 		public Tcp_Stats? rx_tcp_stats { get; set; }
 		public int satisfaction { get; set; }
 		public int satisfaction_now { get; set; }
@@ -187,33 +187,33 @@ namespace TNBU.Core.Models.Inform {
 		public int state { get; set; }
 		public bool state_ht { get; set; }
 		public bool state_pwrmgt { get; set; }
-		public int tx_bytes { get; set; }
-		public int tx_bytes_mov { get; set; }
-		public int tx_combined_retries { get; set; }
-		public int tx_data_mpdu_bytes { get; set; }
-		public int tx_mcs { get; set; }
-		public int tx_packets { get; set; }
-		public int tx_power { get; set; }
-		public int tx_rate { get; set; }
-		public int tx_rate_mov { get; set; }
-		public int tx_retries { get; set; }
-		public int tx_retries_mov { get; set; }
-		public int tx_rts_retries { get; set; }
+		public long tx_bytes { get; set; }
+		public long tx_bytes_mov { get; set; }
+		public long tx_combined_retries { get; set; }
+		public long tx_data_mpdu_bytes { get; set; }
+		public long tx_mcs { get; set; }
+		public long tx_packets { get; set; }
+		public long tx_power { get; set; }
+		public long tx_rate { get; set; }
+		public long tx_rate_mov { get; set; }
+		public long tx_retries { get; set; }
+		public long tx_retries_mov { get; set; }
+		public long tx_rts_retries { get; set; }
 		public Tcp_Stats? tx_tcp_stats { get; set; }
-		public int tx_total { get; set; }
-		public int tx_total_mov { get; set; }
+		public long tx_total { get; set; }
+		public long tx_total_mov { get; set; }
 		public int uptime { get; set; }
 		public int vlan_id { get; set; }
-		public int wifi_tx_attempts { get; set; }
-		public int wifi_tx_attempts_mov { get; set; }
-		public int wifi_tx_dropped { get; set; }
-		public int wifi_tx_dropped_mov { get; set; }
+		public long wifi_tx_attempts { get; set; }
+		public long wifi_tx_attempts_mov { get; set; }
+		public long wifi_tx_dropped { get; set; }
+		public long wifi_tx_dropped_mov { get; set; }
 		public Wifi_Latency? wifi_tx_latency_mov { get; set; }
-		public int wifi_tx_success { get; set; }
+		public long wifi_tx_success { get; set; }
 	}
 
 	public class Tcp_Stats {
-		public int goodbytes { get; set; }
+		public long goodbytes { get; set; }
 		public int lat_avg { get; set; }
 		public int lat_max { get; set; }
 		public int lat_min { get; set; }
@@ -227,8 +227,8 @@ namespace TNBU.Core.Models.Inform {
 		public int avg { get; set; }
 		public int max { get; set; }
 		public int min { get; set; }
-		public int total { get; set; }
-		public int total_count { get; set; }
+		public long total { get; set; }
+		public long total_count { get; set; }
 	}
 
 	public class Lldp_Table {
@@ -279,7 +279,7 @@ namespace TNBU.Core.Models.Inform {
 		public bool jumbo { get; set; }
 		public Mac_Table[]? mac_table { get; set; }
 		public string? media { get; set; }
-		public int poe_caps { get; set; }
+		public long poe_caps { get; set; }
 		public string? poe_class { get; set; }
 		public string? poe_current { get; set; }
 		public bool poe_enable { get; set; }
@@ -289,24 +289,24 @@ namespace TNBU.Core.Models.Inform {
 		public string? poe_voltage { get; set; }
 		public int port_idx { get; set; }
 		public bool port_poe { get; set; }
-		public int rx_broadcast { get; set; }
-		public int rx_bytes { get; set; }
-		public int rx_dropped { get; set; }
-		public int rx_errors { get; set; }
-		public int rx_multicast { get; set; }
-		public int rx_packets { get; set; }
+		public long rx_broadcast { get; set; }
+		public long rx_bytes { get; set; }
+		public long rx_dropped { get; set; }
+		public long rx_errors { get; set; }
+		public long rx_multicast { get; set; }
+		public long rx_packets { get; set; }
 		public int satisfaction { get; set; }
 		public int satisfaction_reason { get; set; }
 		public int speed { get; set; }
 		public int speed_caps { get; set; }
 		public int stp_pathcost { get; set; }
 		public string? stp_state { get; set; }
-		public int tx_broadcast { get; set; }
-		public int tx_bytes { get; set; }
-		public int tx_dropped { get; set; }
-		public int tx_errors { get; set; }
-		public int tx_multicast { get; set; }
-		public int tx_packets { get; set; }
+		public long tx_broadcast { get; set; }
+		public long tx_bytes { get; set; }
+		public long tx_dropped { get; set; }
+		public long tx_errors { get; set; }
+		public long tx_multicast { get; set; }
+		public long tx_packets { get; set; }
 		public bool up { get; set; }
 		public string? sfp_compliance { get; set; }
 		public string? sfp_current { get; set; }
@@ -335,30 +335,30 @@ namespace TNBU.Core.Models.Inform {
 
 	public class Athstats {
 		public string? name { get; set; }
-		public int ast_ath_reset { get; set; }
-		public int ast_be_xmit { get; set; }
-		public int ast_cst { get; set; }
-		public int ast_deadqueue_reset { get; set; }
-		public int ast_fullqueue_stop { get; set; }
-		public int ast_txto { get; set; }
-		public int ce_send_fail_cnt { get; set; }
-		public int cu_self_rx { get; set; }
-		public int cu_self_tx { get; set; }
-		public int cu_total { get; set; }
-		public int invalid_mac_addr_cnt { get; set; }
-		public int n_rx_aggr { get; set; }
-		public int n_rx_pkts { get; set; }
-		public int n_tx_bawadv { get; set; }
-		public int n_tx_bawretries { get; set; }
-		public int n_tx_pkts { get; set; }
-		public int n_tx_queue { get; set; }
-		public int n_tx_retries { get; set; }
-		public int n_tx_xretries { get; set; }
-		public int n_txaggr_compgood { get; set; }
-		public int n_txaggr_compretries { get; set; }
-		public int n_txaggr_compxretry { get; set; }
-		public int n_txaggr_prepends { get; set; }
-		public int noise_floor { get; set; }
+		public long ast_ath_reset { get; set; }
+		public long ast_be_xmit { get; set; }
+		public long ast_cst { get; set; }
+		public long ast_deadqueue_reset { get; set; }
+		public long ast_fullqueue_stop { get; set; }
+		public long ast_txto { get; set; }
+		public long ce_send_fail_cnt { get; set; }
+		public long cu_self_rx { get; set; }
+		public long cu_self_tx { get; set; }
+		public long cu_total { get; set; }
+		public long invalid_mac_addr_cnt { get; set; }
+		public long n_rx_aggr { get; set; }
+		public long n_rx_pkts { get; set; }
+		public long n_tx_bawadv { get; set; }
+		public long n_tx_bawretries { get; set; }
+		public long n_tx_pkts { get; set; }
+		public long n_tx_queue { get; set; }
+		public long n_tx_retries { get; set; }
+		public long n_tx_xretries { get; set; }
+		public long n_txaggr_compgood { get; set; }
+		public long n_txaggr_compretries { get; set; }
+		public long n_txaggr_compxretry { get; set; }
+		public long n_txaggr_prepends { get; set; }
+		public long noise_floor { get; set; }
 		public int satisfaction { get; set; }
 		public int satisfaction_now { get; set; }
 		public int satisfaction_real { get; set; }
@@ -366,10 +366,10 @@ namespace TNBU.Core.Models.Inform {
 	}
 
 	public class Scan_Table {
-		public int age { get; set; }
+		public long age { get; set; }
 		public string? band { get; set; }
 		public string? bssid { get; set; }
-		public int bw { get; set; }
+		public long bw { get; set; }
 		public int center_freq { get; set; }
 		public int channel { get; set; }
 		public string? essid { get; set; }

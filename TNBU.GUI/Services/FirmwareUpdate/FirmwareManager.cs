@@ -10,10 +10,7 @@ namespace TNBU.GUI.Services.FirmwareUpdate {
 		public async Task UpdateFirmwareCache() {
 			var body = await httpClient.GetStringAsync(URL);
 			var decoded = JsonSerializer.Deserialize<SrvFirmwareJson>(body);
-			if(decoded == null) {
-				return;
-			}
-			if(decoded._embedded == null) {
+			if(decoded?._embedded?.firmware == null) {
 				return;
 			}
 			foreach(var fw in decoded._embedded.firmware) {

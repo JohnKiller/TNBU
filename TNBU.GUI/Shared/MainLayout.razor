@@ -1,22 +1,24 @@
 @inherits LayoutComponentBase
 
-<div class="wrapper">
-    <NavMenu>
-        <ListNavMenuItem>
-            <NavMenuItem Link="/" Icon="home" Name="Dashboard" />
-            <NavMenuItem Link="/configuration/" Icon="settings" Name="Configuration">
-                <ListNavMenuItem>
-                    <NavMenuItem Link="/configuration/wifi" Icon="user" Name="WiFi" />
-                    <NavMenuItem Link="/configuration/devices" Icon="user" Name="Devices" />
-                </ListNavMenuItem>
-            </NavMenuItem>
-            <NavMenuItem Link="/switches" Icon="network" Name="Switches" />
-        </ListNavMenuItem>
-    </NavMenu>
-    <div class="page-wrapper">
-        @Body
+<div class="layout-fluid">
+    <div class="wrapper">
+        <NavMenu>
+            <ListNavMenuItem>
+                <NavMenuItem Link="/" Icon="home" Name="Dashboard" />
+                <NavMenuItem Link="/configuration/" Icon="settings" Name="Configuration">
+                    <ListNavMenuItem>
+                        <NavMenuItem Link="/configuration/wifi" Icon="user" Name="WiFi" />
+                        <NavMenuItem Link="/configuration/devices" Icon="user" Name="Devices" />
+                    </ListNavMenuItem>
+                </NavMenuItem>
+                <NavMenuItem Link="/switches" Icon="network" Name="Switches" />
+            </ListNavMenuItem>
+        </NavMenu>
+        <div class="page-wrapper">
+            @Body
+        </div>
     </div>
-</div>
 
-<BlazoredToasts />
-<MessageModal />
+    <BlazoredToasts />
+    <MessageModal />
+</div>

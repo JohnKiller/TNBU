@@ -1,0 +1,17 @@
+@inherits LayoutComponentBase
+
+<div class="border-top-wide border-primary d-flex flex-column">
+    <div class="page page-center">
+        <div class="container-tight py-4">
+            <div class="text-center mb-4">
+                <div class="navbar-brand navbar-brand-autodark">
+                    <img src="/img/logo.svg" height="64" alt="">
+                </div>
+            </div>
+            @Body
+        </div>
+    </div>
+
+    <BlazoredToasts />
+    <MessageModal />
+</div>

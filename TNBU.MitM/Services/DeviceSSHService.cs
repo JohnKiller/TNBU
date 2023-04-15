@@ -44,7 +44,10 @@ public class DeviceSSHService : IDisposable {
 	private void UserAuth(object? sender, UserauthArgs e) {
 		var session = e.Session;
 		logger.LogInformation("Session {session} authenticated as {user}:{pw}", Convert.ToHexString(session.SessionId), e.Username, e.Password);
-		e.Result = true;
+		if(Owner == null) {
+			throw new NullReferenceException(nameof(Owner));
+		}
+		e.Result = Owner.HandleSSHAuth(e.Username, e.Password);
 	}
 
 	private void CommandOpened(object? sender, CommandRequestedArgs e) {

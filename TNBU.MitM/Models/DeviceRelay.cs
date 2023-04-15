@@ -167,6 +167,8 @@ public class DeviceRelay {
 			SaveConfig();
 		}
 
+		inform_resp.Body = inform_resp.Body.Replace(Config.InformURL, FakeInformUrl);
+
 		inform_resp.MACAddress = Mac;
 		return inform_resp.Encode(Config.AuthKey);
 	}
@@ -177,6 +179,17 @@ public class DeviceRelay {
 		dp.SetPayloadAsMac(DiscoveryPacket.PAYLOAD_SERIAL, FakeMac);
 		dp.SetPayloadAsUShort(DiscoveryPacket.PAYLOAD_SSHPORT, sshService.Port);
 		dp.Broadcast();
+	}
+
+	public bool HandleSSHAuth(string user, string password) {
+		try {
+			using var client = new Renci.SshNet.SshClient(IP.ToString(), user, password);
+			client.Connect();
+			return true;
+		}catch(Exception ex) {
+			logger.LogError("Failed test auth: {reason}", ex.Message);
+			return false;
+		}
 	}
 
 	public (string response, int exitCode) HandleSSHExec(string cmd, string user, string password) {

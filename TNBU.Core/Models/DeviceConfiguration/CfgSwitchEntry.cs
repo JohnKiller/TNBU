@@ -4,6 +4,7 @@ namespace TNBU.Core.Models.DeviceConfiguration {
 		public bool PoeEnabled { get; set; } = true;
 		public bool StpEnabled { get; set; } = true;
 		public int? LAG { get; set; }
+		public int? PVID { get; set; }
 		public string GetConfig(int num) {
 			var OpMode = "switch";
 			if(LAG.HasValue) {
@@ -27,6 +28,11 @@ switch.port.{num}.status=disabled
 			if(LAG.HasValue) {
 				ret += $@"
 switch.port.{num}.lag={LAG.Value}
+";
+			}
+			if(PVID.HasValue) {
+				ret += $@"
+switch.port.{num}.pvid={PVID.Value}
 ";
 			}
 			return ret;

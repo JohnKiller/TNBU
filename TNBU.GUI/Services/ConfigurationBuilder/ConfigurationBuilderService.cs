@@ -40,13 +40,29 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 				}
 			};
 			if(d.PhysicalSwitchPorts.Count > 2) {
-				/*ret.Switch.StpPriority = d.Mac.ToString() switch {
-					"D021F9B8E0E4" => 4096 * 2,
-					"D021F9E29E55" => 4096 * 3,
-					"D021F9BD72BB" => 4096 * 4,
-					"70A741C418A8" => 4096 * 5,
+				ret.Switch.VLANs.Add(new() {
+					ID = 1
+				});
+				ret.Switch.VLANs.Add(new() {
+					ID = 10
+				});
+				ret.Switch.VLANs.Add(new() {
+					ID = 11
+				});
+				if(d.Mac.ToString() == "70A741C418A8") {
+					ret.Switch.VLANs[0].Ports.Add(3, false);
+					ret.Switch.VLANs[1].Ports.Add(3, true);
+					ret.Switch.VLANs[2].Ports.Add(3, false);
+
+					ret.Switch.VLANs[0].Ports.Add(4, false);
+					ret.Switch.VLANs[1].Ports.Add(4, false);
+					ret.Switch.VLANs[2].Ports.Add(4, true);
+				}
+				ret.Switch.StpPriority = d.Mac.ToString() switch {
+					"70A741C418A8" => 4096 * 2,
+					"D021F9B8E0E4" => 4096 * 3,
 					_ => 32768
-				};*/
+				};
 				foreach(var port in d.PhysicalSwitchPorts) {
 					var p = new CfgSwitchEntry() {
 						/*LAG = port.ID switch {
@@ -62,6 +78,24 @@ namespace TNBU.GUI.Services.ConfigurationBuilder {
 						//Enabled = port.ID < 10,
 						//StpEnabled = port.ID > 2,
 					};
+					if(
+						(d.Mac.ToString() == "70A741C418A8") &&
+						(port.ID == 1 || port.ID == 2)
+					) {
+						p.LAG = 1;
+					}
+					if(
+						(d.Mac.ToString() == "70A741C418A8") &&
+						(port.ID == 3)
+					) {
+						p.PVID = 10;
+					}
+					if(
+						(d.Mac.ToString() == "70A741C418A8") &&
+						(port.ID == 4)
+					) {
+						p.PVID = 11;
+					}
 					ret.Switch.Entries.Add(p);
 				}
 			}

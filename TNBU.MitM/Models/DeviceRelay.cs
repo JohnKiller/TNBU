@@ -208,7 +208,7 @@ public class DeviceRelay {
 			var ret = client.RunCommand(newcmd);
 			var result = ret.Result;
 			logger.LogInformation("Response from real device: \"{result}\" exit code is {exit}", result, ret.ExitStatus);
-			return (result, ret.ExitStatus);
+			return (result, ret.ExitStatus ?? 1);
 		}
 		throw new NotImplementedException(cmd);
 	}
